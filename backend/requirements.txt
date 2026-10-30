@@ -18,3 +18,4 @@ faker
 pytest
 pytest-asyncio
 httpx
+psycopg[binary]
