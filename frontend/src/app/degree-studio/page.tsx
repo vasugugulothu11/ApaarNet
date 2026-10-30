@@ -321,7 +321,7 @@ export default function DegreeStudioPage() {
             {/* University Crest & Header */}
             <div className="text-center space-y-1.5 border-b border-amber-600/30 pb-4">
               <div className="flex items-center justify-center gap-2">
-                <Building2 className="h-6 w-6 text-amber-400" />
+                <Building2 className="h-6 w-6 text-amber-700" />
                 <h3 className="text-lg font-black tracking-wider text-[#003366] uppercase font-serif font-black">
                   {selectedStudent.institution}
                 </h3>
@@ -329,7 +329,7 @@ export default function DegreeStudioPage() {
               <p className="text-[11px] font-mono text-slate-600">
                 AICTE Permanent ID: {selectedStudent.aicte_id} • AISHE Code: {selectedStudent.aishe_code}
               </p>
-              <div className="text-xs uppercase tracking-widest text-amber-400/80 font-bold font-serif pt-1">
+              <div className="text-xs uppercase tracking-widest text-amber-900 font-bold font-serif pt-1">
                 Upon the Recommendation of the Academic Council Confers
               </div>
             </div>
@@ -368,14 +368,14 @@ export default function DegreeStudioPage() {
             <div className="pt-4 border-t border-amber-600/30 flex items-center justify-between">
               {/* Cryptographic Seal */}
               <div className="space-y-1 text-left">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#046A38]">
                   <ShieldCheck className="h-4 w-4" />
                   <span>Ed25519 Cryptographic Seal</span>
                 </div>
-                <div className="text-[10px] text-slate-600 font-mono max-w-[200px] truncate">
+                <div className="text-[10px] text-slate-700 font-mono font-medium max-w-[200px] truncate">
                   W3C VC v2.0 • StatusList Index #42
                 </div>
-                <div className="text-[9px] text-slate-500 font-mono">
+                <div className="text-[9px] text-slate-700 font-mono font-semibold">
                   Autonomous AICTE Sovereign Key
                 </div>
               </div>
@@ -424,13 +424,13 @@ export default function DegreeStudioPage() {
                   type="button"
                   onClick={handleVerifyAuthentic}
                   disabled={isVerifying}
-                  className="rounded-xl border border-emerald-500/60 bg-emerald-950/40 p-3 text-left hover:bg-emerald-900/40 transition-colors shadow-lg shadow-emerald-950/30"
+                  className="rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-left hover:bg-emerald-100/70 transition-colors shadow-xs"
                 >
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-300">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900">
+                    <CheckCircle2 className="h-4 w-4 text-[#046A38] flex-shrink-0" />
                     <span>Verify Authentic QR</span>
                   </div>
-                  <p className="text-[10px] text-emerald-200/70 mt-1">
+                  <p className="text-[10px] text-emerald-800 font-medium mt-1">
                     Stateless 0-DB-query Ed25519 verification.
                   </p>
                 </button>
@@ -440,13 +440,13 @@ export default function DegreeStudioPage() {
                   type="button"
                   onClick={handleSimulateTamper}
                   disabled={isVerifying}
-                  className="rounded-xl border border-rose-500/60 bg-rose-950/40 p-3 text-left hover:bg-rose-900/40 transition-colors shadow-lg shadow-rose-950/30"
+                  className="rounded-xl border border-rose-300 bg-rose-50 p-3 text-left hover:bg-rose-100/70 transition-colors shadow-xs"
                 >
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-rose-300">
-                    <AlertTriangle className="h-4 w-4 text-rose-400 flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-rose-900">
+                    <AlertTriangle className="h-4 w-4 text-rose-700 flex-shrink-0" />
                     <span>Simulate Forgery</span>
                   </div>
-                  <p className="text-[10px] text-rose-200/70 mt-1">
+                  <p className="text-[10px] text-rose-800 font-medium mt-1">
                     Alter 1 character in name/roll no to trigger instant failure.
                   </p>
                 </button>
@@ -456,13 +456,13 @@ export default function DegreeStudioPage() {
                   type="button"
                   onClick={handleRevokeDegree}
                   disabled={isVerifying}
-                  className="rounded-xl border border-amber-500/60 bg-amber-950/40 p-3 text-left hover:bg-amber-900/40 transition-colors shadow-lg shadow-amber-950/30"
+                  className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-left hover:bg-amber-100/70 transition-colors shadow-xs"
                 >
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
-                    <XCircle className="h-4 w-4 text-amber-400 flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900">
+                    <XCircle className="h-4 w-4 text-amber-700 flex-shrink-0" />
                     <span>Revoke Degree</span>
                   </div>
-                  <p className="text-[10px] text-amber-200/70 mt-1">
+                  <p className="text-[10px] text-amber-800 font-medium mt-1">
                     Flip bit in 100k-bit Bitstring Status List.
                   </p>
                 </button>
@@ -474,34 +474,34 @@ export default function DegreeStudioPage() {
               <div
                 className={`rounded-2xl border-2 p-5 space-y-3 animate-in fade-in duration-300 ${
                   verificationResult.status === "AUTHENTICATED"
-                    ? "border-emerald-500/80 bg-emerald-950/30"
+                    ? "border-emerald-300 bg-emerald-50/80"
                     : verificationResult.status === "REVOKED"
-                    ? "border-amber-500/80 bg-amber-950/30"
-                    : "border-rose-500/80 bg-rose-950/30"
+                    ? "border-amber-300 bg-amber-50/80"
+                    : "border-rose-300 bg-rose-50/80"
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {verificationResult.status === "AUTHENTICATED" ? (
-                      <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+                      <CheckCircle2 className="h-6 w-6 text-[#046A38]" />
                     ) : verificationResult.status === "REVOKED" ? (
-                      <AlertTriangle className="h-6 w-6 text-amber-400" />
+                      <AlertTriangle className="h-6 w-6 text-amber-700" />
                     ) : (
-                      <XCircle className="h-6 w-6 text-rose-400" />
+                      <XCircle className="h-6 w-6 text-rose-700" />
                     )}
                     <div>
                       <div
                         className={`text-sm font-black tracking-wide ${
                           verificationResult.status === "AUTHENTICATED"
-                            ? "text-emerald-300"
+                            ? "text-[#046A38]"
                             : verificationResult.status === "REVOKED"
-                            ? "text-amber-300"
-                            : "text-rose-300"
+                            ? "text-amber-900"
+                            : "text-rose-900"
                         }`}
                       >
                         STATUS: {verificationResult.status}
                       </div>
-                      <div className="text-[11px] text-slate-700">
+                      <div className="text-[11px] text-slate-700 font-medium">
                         Zero Database Queries • Pure Cryptographic Validation
                       </div>
                     </div>
@@ -510,8 +510,8 @@ export default function DegreeStudioPage() {
                   <span
                     className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
                       verificationResult.is_valid
-                        ? "bg-emerald-950 text-emerald-300 border border-emerald-700"
-                        : "bg-rose-950 text-rose-300 border border-rose-700"
+                        ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
+                        : "bg-rose-100 text-rose-900 border border-rose-300"
                     }`}
                   >
                     {verificationResult.is_valid ? "VALID SIGNATURE" : "SIGNATURE REJECTED"}
@@ -533,19 +533,19 @@ export default function DegreeStudioPage() {
                     </div>
                     <div>
                       <span className="text-slate-600 font-sans">APAAR:</span>{" "}
-                      <span className="text-cyan-300">
+                      <span className="text-[#003366] font-bold">
                         {verificationResult.credential_subject.apaar_id}
                       </span>
                     </div>
                     <div>
                       <span className="text-slate-600 font-sans">Roll No:</span>{" "}
-                      <span className="text-emerald-300">
+                      <span className="text-[#046A38] font-bold">
                         {verificationResult.credential_subject.institutional_student_id}
                       </span>
                     </div>
                     <div>
                       <span className="text-slate-600 font-sans">Bit Index:</span>{" "}
-                      <span className="text-amber-300">#42</span>
+                      <span className="text-amber-800 font-bold">#42</span>
                     </div>
                   </div>
                 )}
@@ -554,22 +554,22 @@ export default function DegreeStudioPage() {
 
             {/* Collapsible W3C VC JSON Payload */}
             <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-600">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-800">
                 <span className="flex items-center gap-1.5">
-                  <FileText className="h-4 w-4 text-cyan-400" />
+                  <FileText className="h-4 w-4 text-[#003366]" />
                   Canonical W3C Verifiable Credential v2.0 JSON
                 </span>
-                <span className="text-[10px] font-mono text-slate-500">
+                <span className="text-[10px] font-mono text-slate-700 font-semibold">
                   Ed25519Signature2020
                 </span>
               </div>
-              <div className="max-h-48 overflow-y-auto rounded-lg bg-slate-50/80 p-3 font-mono text-[11px] text-cyan-300 scrollbar-thin">
+              <div className="max-h-48 overflow-y-auto rounded-lg bg-slate-50 p-3 font-mono text-[11px] text-[#003366] font-medium border border-slate-200 scrollbar-thin">
                 <pre>{JSON.stringify(activeVcPayload || {}, null, 2)}</pre>
               </div>
             </div>
           </div>
 
-          <div className="text-[11px] text-slate-500 text-center">
+          <div className="text-[11px] text-slate-700 font-medium text-center">
             Standardized W3C Verifiable Credential v2.0 format with Ed25519 cryptographic signatures and stateless offline verification.
           </div>
         </div>

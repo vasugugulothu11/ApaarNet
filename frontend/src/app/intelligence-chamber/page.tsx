@@ -251,7 +251,7 @@ export default function IntelligenceChamberPage() {
                 : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
             }`}
           >
-            <Scale className="h-5 w-5 text-amber-400 flex-shrink-0" />
+            <Scale className="h-5 w-5 text-amber-600 flex-shrink-0" />
             <div>
               <div className="text-xs font-bold text-slate-900">Module 4: Dispute Chamber</div>
               <div className="text-[10px] text-slate-600">Tri-Party Adjudication</div>
@@ -267,8 +267,8 @@ export default function IntelligenceChamberPage() {
         <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 space-y-6 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/40 bg-purple-950/70 px-3 py-0.5 text-xs font-bold text-purple-300">
-                <Sparkles className="h-3.5 w-3.5" />
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3 py-0.5 text-xs font-bold text-purple-900">
+                <Sparkles className="h-3.5 w-3.5 text-purple-600" />
                 CASE E DEMONSTRATION • NETWORKX GRAPH AI
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 mt-1">
@@ -280,7 +280,7 @@ export default function IntelligenceChamberPage() {
             </div>
 
             <div className="flex items-center gap-2 text-xs">
-              <span className="rounded bg-rose-950/80 px-2.5 py-1 text-rose-300 font-bold border border-rose-800">
+              <span className="rounded bg-rose-100 px-2.5 py-1 text-rose-900 font-bold border border-rose-300">
                 Ring #882: 8 Students Across 2 Colleges
               </span>
             </div>
@@ -290,16 +290,16 @@ export default function IntelligenceChamberPage() {
             {/* Left 2 Cols: Interactive SVG Graph Canvas */}
             <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-xs p-6 flex flex-col items-center justify-center relative overflow-hidden">
               <div className="absolute top-4 left-4 z-10 flex items-center gap-3 text-xs">
-                <span className="flex items-center gap-1.5 text-cyan-400 font-medium">
-                  <span className="h-2.5 w-2.5 rounded-full bg-cyan-500" />
+                <span className="flex items-center gap-1.5 text-sky-800 font-semibold">
+                  <span className="h-2.5 w-2.5 rounded-full bg-sky-600" />
                   Deccan Valley Students (5)
                 </span>
-                <span className="flex items-center gap-1.5 text-amber-400 font-medium">
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                <span className="flex items-center gap-1.5 text-amber-800 font-semibold">
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-600" />
                   Metro Tech Students (3)
                 </span>
-                <span className="flex items-center gap-1.5 text-rose-400 font-medium">
-                  <span className="h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse" />
+                <span className="flex items-center gap-1.5 text-rose-800 font-semibold">
+                  <span className="h-2.5 w-2.5 rounded-full bg-rose-600 animate-pulse" />
                   Shared Syndicate Hubs (2)
                 </span>
               </div>
@@ -575,7 +575,7 @@ export default function IntelligenceChamberPage() {
                 </svg>
               </div>
 
-              <div className="text-[11px] text-slate-500 text-center mt-2">
+              <div className="text-[11px] text-slate-700 font-medium text-center mt-2">
                 Click on any node (students or hubs) to inspect cryptographic syndicate forensics.
               </div>
             </div>
@@ -585,10 +585,10 @@ export default function IntelligenceChamberPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                   <span className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                    <ShieldAlert className="h-4 w-4 text-rose-400" />
+                    <ShieldAlert className="h-4 w-4 text-rose-600" />
                     Node Forensic Inspector
                   </span>
-                  <span className="rounded bg-rose-950 px-2 py-0.5 text-[10px] font-bold text-rose-300 font-mono border border-rose-800">
+                  <span className="rounded bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-800 font-mono border border-rose-200">
                     {selectedNode?.type?.toUpperCase() || "SYNDICATE"}
                   </span>
                 </div>
@@ -596,7 +596,7 @@ export default function IntelligenceChamberPage() {
                 {selectedNode ? (
                   <div className="space-y-3 text-xs">
                     <div>
-                      <div className="text-[10px] text-slate-500 uppercase font-bold">
+                      <div className="text-[10px] text-slate-700 uppercase font-bold">
                         Identifier / Name
                       </div>
                       <div className="text-sm font-bold text-slate-900 font-mono mt-0.5">
@@ -606,26 +606,26 @@ export default function IntelligenceChamberPage() {
 
                     {Object.entries(selectedNode.data || {}).map(([key, val]) => (
                       <div key={key} className="rounded-lg bg-slate-50 p-2.5 border border-slate-200">
-                        <div className="text-[10px] text-slate-600 uppercase font-semibold">
+                        <div className="text-[10px] text-slate-700 uppercase font-bold">
                           {key.replace(/_/g, " ")}
                         </div>
-                        <div className="text-slate-800 font-mono mt-0.5">
+                        <div className="text-slate-900 font-mono font-medium mt-0.5">
                           {String(val)}
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="py-12 text-center text-xs text-slate-500">
+                  <div className="py-12 text-center text-xs text-slate-600 font-medium">
                     Select a node in the graph
                   </div>
                 )}
               </div>
 
               {/* Ring Metrics Box */}
-              <div className="rounded-xl border border-rose-900/60 bg-rose-950/20 p-4 space-y-2 text-xs">
-                <div className="font-bold text-rose-300 flex items-center gap-1.5">
-                  <BadgeAlert className="h-4 w-4" />
+              <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 space-y-2 text-xs">
+                <div className="font-bold text-rose-900 flex items-center gap-1.5">
+                  <BadgeAlert className="h-4 w-4 text-rose-600" />
                   Syndicate Anomaly Signature
                 </div>
                 <div className="text-[11px] text-rose-200/80 leading-relaxed">
@@ -802,7 +802,7 @@ export default function IntelligenceChamberPage() {
                   </div>
                 </div>
               ) : (
-                <div className="py-20 text-center text-xs text-slate-500">
+                <div className="py-20 text-center text-xs text-slate-700 font-medium">
                   Select an institution on the left to inspect its SHAP waterfall.
                 </div>
               )}
@@ -869,36 +869,36 @@ export default function IntelligenceChamberPage() {
 
                 <div className="space-y-1">
                   <div className="text-lg font-bold text-slate-900">Aarav Sharma</div>
-                  <div className="text-xs font-mono text-cyan-300">APAAR: 482910384715</div>
+                  <div className="text-xs font-mono text-[#003366] font-bold">APAAR: 482910384715</div>
                 </div>
 
                 {/* Side-by-side enrolment cards */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-xs">
                   <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-3 space-y-1">
-                    <div className="text-[10px] text-slate-500 font-bold uppercase">Enrolment #1</div>
-                    <div className="font-semibold text-slate-900">Apex Institute of Tech</div>
-                    <div className="text-slate-700">B.Tech Mechanical</div>
-                    <div className="rounded bg-slate-50 px-1.5 py-0.5 text-[10px] text-cyan-300 font-mono inline-block">
+                    <div className="text-[10px] text-slate-700 font-bold uppercase">Enrolment #1</div>
+                    <div className="font-bold text-slate-900">Apex Institute of Tech</div>
+                    <div className="text-slate-800 font-medium">B.Tech Mechanical</div>
+                    <div className="rounded bg-blue-50 px-2 py-0.5 text-[10px] text-[#003366] font-mono font-bold inline-block border border-blue-200">
                       REGULAR_PHYSICAL
                     </div>
                   </div>
 
                   <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-3 space-y-1">
-                    <div className="text-[10px] text-slate-500 font-bold uppercase">Enrolment #2</div>
-                    <div className="font-semibold text-slate-900">COEP Technological Univ</div>
-                    <div className="text-slate-700">Diploma Data Science</div>
-                    <div className="rounded bg-slate-50 px-1.5 py-0.5 text-[10px] text-purple-300 font-mono inline-block">
+                    <div className="text-[10px] text-slate-700 font-bold uppercase">Enrolment #2</div>
+                    <div className="font-bold text-slate-900">COEP Technological Univ</div>
+                    <div className="text-slate-800 font-medium">Diploma Data Science</div>
+                    <div className="rounded bg-purple-50 px-2 py-0.5 text-[10px] text-purple-900 font-mono font-bold inline-block border border-purple-200">
                       ONLINE_ODL
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-emerald-800/60 bg-emerald-950/60 p-3.5 space-y-1 text-xs text-emerald-200">
-                  <div className="font-bold flex items-center gap-1.5">
-                    <ShieldCheck className="h-4 w-4" />
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 space-y-1 text-xs text-emerald-950">
+                  <div className="font-bold text-emerald-900 flex items-center gap-1.5">
+                    <ShieldCheck className="h-4 w-4 text-[#046A38]" />
                     Verdict: LAWFUL_UGC_DUAL_DEGREE
                   </div>
-                  <div className="text-[11px] text-emerald-300/80 leading-relaxed">
+                  <div className="text-[11px] text-emerald-800 leading-relaxed font-medium">
                     UGC Regulation 2022 allows 1 physical regular program combined with 1 online/ODL program.
                     ApaarNet auto-permits this candidate without false-positive penalty.
                   </div>
@@ -906,46 +906,46 @@ export default function IntelligenceChamberPage() {
               </div>
 
               {/* Case C: Illegal Cross-State Concurrent Regular */}
-              <div className="rounded-2xl border-2 border-rose-500/40 bg-rose-950/20 p-6 space-y-4">
+              <div className="rounded-2xl border-2 border-rose-300 bg-rose-50/40 p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="rounded bg-rose-950 px-2 py-0.5 text-xs font-bold text-rose-300 border border-rose-700">
+                  <span className="rounded bg-rose-100 px-2.5 py-1 text-xs font-bold text-rose-900 border border-rose-300">
                     CASE C • FRAUD COLLISION
                   </span>
-                  <AlertTriangle className="h-5 w-5 text-rose-400" />
+                  <AlertTriangle className="h-5 w-5 text-rose-600" />
                 </div>
 
                 <div className="space-y-1">
                   <div className="text-lg font-bold text-slate-900">Priya Nair</div>
-                  <div className="text-xs font-mono text-cyan-300">APAAR: 739201846297</div>
+                  <div className="text-xs font-mono text-[#003366] font-bold">APAAR: 739201846297</div>
                 </div>
 
                 {/* Side-by-side enrolment cards */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-xs">
                   <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-3 space-y-1">
-                    <div className="text-[10px] text-slate-500 font-bold uppercase">Enrolment #1 (Tamil Nadu)</div>
-                    <div className="font-semibold text-slate-900">PSG College of Tech</div>
-                    <div className="text-slate-700">B.Tech Computer Science</div>
-                    <div className="rounded bg-rose-950 px-1.5 py-0.5 text-[10px] text-rose-300 font-mono inline-block">
+                    <div className="text-[10px] text-slate-700 font-bold uppercase">Enrolment #1 (Tamil Nadu)</div>
+                    <div className="font-bold text-slate-900">PSG College of Tech</div>
+                    <div className="text-slate-800 font-medium">B.Tech Computer Science</div>
+                    <div className="rounded bg-rose-50 px-2 py-0.5 text-[10px] text-rose-900 font-mono font-bold inline-block border border-rose-200">
                       REGULAR_PHYSICAL
                     </div>
                   </div>
 
                   <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-3 space-y-1">
-                    <div className="text-[10px] text-slate-500 font-bold uppercase">Enrolment #2 (Karnataka)</div>
-                    <div className="font-semibold text-slate-900">BMS College of Engg</div>
-                    <div className="text-slate-700">B.Tech Electronics</div>
-                    <div className="rounded bg-rose-950 px-1.5 py-0.5 text-[10px] text-rose-300 font-mono inline-block">
+                    <div className="text-[10px] text-slate-700 font-bold uppercase">Enrolment #2 (Karnataka)</div>
+                    <div className="font-bold text-slate-900">BMS College of Engg</div>
+                    <div className="text-slate-800 font-medium">B.Tech Electronics</div>
+                    <div className="rounded bg-rose-50 px-2 py-0.5 text-[10px] text-rose-900 font-mono font-bold inline-block border border-rose-200">
                       REGULAR_PHYSICAL
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-rose-800/60 bg-rose-950/60 p-3.5 space-y-1 text-xs text-rose-200">
-                  <div className="font-bold flex items-center gap-1.5">
-                    <AlertTriangle className="h-4 w-4" />
+                <div className="rounded-xl border border-rose-200 bg-rose-50 p-3.5 space-y-1 text-xs text-rose-950">
+                  <div className="font-bold text-rose-900 flex items-center gap-1.5">
+                    <AlertTriangle className="h-4 w-4 text-rose-600" />
                     Verdict: ILLEGAL_CONCURRENT_REGULAR
                   </div>
-                  <div className="text-[11px] text-rose-300/80 leading-relaxed">
+                  <div className="text-[11px] text-rose-900 leading-relaxed font-medium">
                     Student concurrently occupies 2 physical full-time seats 350 km apart. Flagged as regulatory
                     breach and escalated to Tri-Party Dispute Chamber.
                   </div>
@@ -968,19 +968,19 @@ export default function IntelligenceChamberPage() {
           {collisionSubTab === "phonetic-twins" && (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {/* Case D1: Phonetic Evasion Caught */}
-              <div className="rounded-2xl border-2 border-rose-500/40 bg-rose-950/20 p-6 space-y-4">
+              <div className="rounded-2xl border-2 border-rose-300 bg-rose-50/70 p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="rounded bg-rose-950 px-2 py-0.5 text-xs font-bold text-rose-300 border border-rose-700">
+                  <span className="rounded bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-900 border border-rose-300">
                     CASE D1 • PHONETIC EVASION
                   </span>
-                  <AlertTriangle className="h-5 w-5 text-rose-400" />
+                  <AlertTriangle className="h-5 w-5 text-rose-600" />
                 </div>
 
                 <div className="space-y-1">
                   <div className="text-base font-bold text-slate-900">
                     Mohammed Rayyan Khan vs. Mohd. Rayan Khan
                   </div>
-                  <div className="text-xs text-slate-600 font-mono">
+                  <div className="text-xs text-slate-700 font-mono font-medium">
                     Token: PROV-APN-9001 (Evasion Attempt)
                   </div>
                 </div>
@@ -988,46 +988,46 @@ export default function IntelligenceChamberPage() {
                 <div className="space-y-2 text-xs font-mono">
                   <div className="flex justify-between border-b border-slate-200/80 py-1.5">
                     <span className="text-slate-600 font-sans">Name Tokens:</span>
-                    <span className="text-slate-900">MHMD RYN KHN (Exact Phonetic)</span>
+                    <span className="text-slate-900 font-bold">MHMD RYN KHN (Exact Phonetic)</span>
                   </div>
                   <div className="flex justify-between border-b border-slate-200/80 py-1.5">
                     <span className="text-slate-600 font-sans">Date of Birth:</span>
-                    <span className="text-emerald-400">2006-05-14 (MATCH)</span>
+                    <span className="text-[#046A38] font-bold">2006-05-14 (MATCH)</span>
                   </div>
                   <div className="flex justify-between border-b border-slate-200/80 py-1.5">
                     <span className="text-slate-600 font-sans">Parent Initials:</span>
-                    <span className="text-emerald-400">S.K. (MATCH)</span>
+                    <span className="text-[#046A38] font-bold">S.K. (MATCH)</span>
                   </div>
                   <div className="flex justify-between border-b border-slate-200/80 py-1.5">
                     <span className="text-slate-600 font-sans">Pincode:</span>
-                    <span className="text-emerald-400">500032 (MATCH)</span>
+                    <span className="text-[#046A38] font-bold">500032 (MATCH)</span>
                   </div>
                   <div className="flex justify-between pt-1 font-bold">
-                    <span className="text-rose-400 font-sans">Fellegi-Sunter P(Match):</span>
-                    <span className="text-rose-400 text-sm">99.9%</span>
+                    <span className="text-rose-700 font-sans">Fellegi-Sunter P(Match):</span>
+                    <span className="text-rose-700 text-sm">99.9%</span>
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-rose-800/60 bg-rose-950/60 p-3 text-xs text-rose-200">
+                <div className="rounded-xl border border-rose-200 bg-rose-100/70 p-3 text-xs text-rose-900">
                   <span className="font-bold">Evasion Neutralized:</span> Student attempted to bypass
                   duplicate detection using abbreviated initials under a provisional token.
                 </div>
               </div>
 
               {/* Case D2: Genuine Twins Protected */}
-              <div className="rounded-2xl border-2 border-emerald-500/40 bg-emerald-950/20 p-6 space-y-4">
+              <div className="rounded-2xl border-2 border-emerald-300 bg-emerald-50/70 p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="rounded bg-emerald-950 px-2 py-0.5 text-xs font-bold text-emerald-300 border border-emerald-700">
+                  <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-900 border border-emerald-300">
                     CASE D2 • TWIN DISAMBIGUATION
                   </span>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                  <CheckCircle2 className="h-5 w-5 text-[#046A38]" />
                 </div>
 
                 <div className="space-y-1">
                   <div className="text-base font-bold text-slate-900">
                     Rohan Deshmukh vs. Sohan Deshmukh
                   </div>
-                  <div className="text-xs text-slate-600 font-mono">
+                  <div className="text-xs text-slate-700 font-mono font-medium">
                     Distinct APAAR IDs • Genuine Twin Siblings
                   </div>
                 </div>
@@ -1035,27 +1035,27 @@ export default function IntelligenceChamberPage() {
                 <div className="space-y-2 text-xs font-mono">
                   <div className="flex justify-between border-b border-slate-200/80 py-1.5">
                     <span className="text-slate-600 font-sans">Given Names:</span>
-                    <span className="text-emerald-400">Rohan != Sohan (DISTINCT)</span>
+                    <span className="text-[#046A38] font-bold">Rohan != Sohan (DISTINCT)</span>
                   </div>
                   <div className="flex justify-between border-b border-slate-200/80 py-1.5">
                     <span className="text-slate-600 font-sans">Date of Birth:</span>
-                    <span className="text-slate-700">2006-08-19 (Shared Twins)</span>
+                    <span className="text-slate-800 font-medium">2006-08-19 (Shared Twins)</span>
                   </div>
                   <div className="flex justify-between border-b border-slate-200/80 py-1.5">
                     <span className="text-slate-600 font-sans">Parent Initials:</span>
-                    <span className="text-slate-700">V.D. (Shared Family)</span>
+                    <span className="text-slate-800 font-medium">V.D. (Shared Family)</span>
                   </div>
                   <div className="flex justify-between border-b border-slate-200/80 py-1.5">
                     <span className="text-slate-600 font-sans">Address / Pincode:</span>
-                    <span className="text-slate-700">411001 (Shared Home)</span>
+                    <span className="text-slate-800 font-medium">411001 (Shared Home)</span>
                   </div>
                   <div className="flex justify-between pt-1 font-bold">
-                    <span className="text-emerald-400 font-sans">Twin Disambiguated P(Match):</span>
-                    <span className="text-emerald-400 text-sm">5.0%</span>
+                    <span className="text-[#046A38] font-sans">Twin Disambiguated P(Match):</span>
+                    <span className="text-[#046A38] text-sm">5.0%</span>
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-emerald-800/60 bg-emerald-950/60 p-3 text-xs text-emerald-200">
+                <div className="rounded-xl border border-emerald-300 bg-emerald-100/70 p-3 text-xs text-emerald-950">
                   <span className="font-bold">Zero False Rejection:</span> Twin Disambiguation Guard
                   verifies distinct roll numbers and verified APAAR IDs, protecting genuine siblings.
                 </div>
@@ -1084,17 +1084,17 @@ export default function IntelligenceChamberPage() {
               </p>
             </div>
 
-            <div className="text-xs font-mono text-slate-600">
-              Active Tickets: <span className="text-amber-400 font-bold">{disputes.length}</span>
+            <div className="text-xs font-mono text-slate-700 font-medium">
+              Active Tickets: <span className="text-amber-800 font-bold">{disputes.length}</span>
             </div>
           </div>
 
           {/* Adjudication Success Receipt Alert */}
           {lastAdjudicatedReceipt && (
-            <div className="rounded-xl border border-emerald-500/50 bg-emerald-950/40 p-4 space-y-2 text-xs">
+            <div className="rounded-xl border border-emerald-300 bg-emerald-50 p-4 space-y-2 text-xs">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-emerald-400 flex items-center gap-1.5">
-                  <CheckCircle2 className="h-4 w-4" />
+                <span className="font-bold text-[#046A38] flex items-center gap-1.5">
+                  <CheckCircle2 className="h-4 w-4 text-[#046A38]" />
                   Dispute Adjudicated & Sealed in Merkle Ledger
                 </span>
                 <button
@@ -1143,12 +1143,12 @@ export default function IntelligenceChamberPage() {
                           {ticket.status}
                         </span>
                       </div>
-                      <div className="text-xs text-cyan-400 font-mono mt-0.5">
+                      <div className="text-xs text-[#003366] font-mono font-bold mt-0.5">
                         Student APAAR / Token: {ticket.student_apaar_or_token}
                       </div>
                     </div>
 
-                    <div className="text-xs font-mono text-slate-500">
+                    <div className="text-xs font-mono text-slate-700 font-semibold">
                       Filed: {new Date(ticket.created_at).toLocaleDateString()}
                     </div>
                   </div>
@@ -1156,25 +1156,25 @@ export default function IntelligenceChamberPage() {
                   {/* Inter-State College Conflict View */}
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 text-xs">
                     <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-1">
-                      <div className="text-[10px] text-slate-500 font-bold uppercase">
+                      <div className="text-[10px] text-slate-700 font-bold uppercase">
                         Originating Institution (College A)
                       </div>
                       <div className="font-bold text-slate-900 text-sm">
                         {ticket.college_a_name}
                       </div>
-                      <div className="text-slate-600 font-mono text-[11px]">
+                      <div className="text-slate-700 font-mono text-[11px] font-semibold">
                         ID: {ticket.college_a_id}
                       </div>
                     </div>
 
                     <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-1">
-                      <div className="text-[10px] text-slate-500 font-bold uppercase">
+                      <div className="text-[10px] text-slate-700 font-bold uppercase">
                         Contesting Institution (College B)
                       </div>
                       <div className="font-bold text-slate-900 text-sm">
                         {ticket.college_b_name}
                       </div>
-                      <div className="text-slate-600 font-mono text-[11px]">
+                      <div className="text-slate-700 font-mono text-[11px] font-semibold">
                         ID: {ticket.college_b_id}
                       </div>
                     </div>

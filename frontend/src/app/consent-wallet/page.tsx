@@ -246,7 +246,7 @@ export default function ConsentWalletPage() {
 
             {/* Requester Role Selector */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                 Requester Stakeholder Role
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -265,7 +265,7 @@ export default function ConsentWalletPage() {
                       className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all ${
                         isSelected
                           ? "border-[#003366] bg-blue-50 text-[#003366] font-bold shadow-xs"
-                          : "border-slate-200 bg-slate-50 text-slate-600 hover:text-white"
+                          : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
                       }`}
                     >
                       <Icon className="h-4 w-4" />
@@ -278,33 +278,33 @@ export default function ConsentWalletPage() {
 
             {/* Requester Name Input */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1">
                 Requester Organization Name
               </label>
               <input
                 type="text"
                 value={requesterName}
                 onChange={(e) => setRequesterName(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 bg-white text-slate-800 px-3.5 py-2 text-xs text-white focus:border-cyan-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 bg-white text-slate-900 font-medium px-3.5 py-2 text-xs focus:border-[#003366] focus:outline-none"
               />
             </div>
 
             {/* Target APAAR ID */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1">
                 Student APAAR ID or Provisional Token
               </label>
               <input
                 type="text"
                 value={selectedStudentApaar}
                 onChange={(e) => setSelectedStudentApaar(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 bg-white text-slate-800 px-3.5 py-2 text-xs font-mono text-cyan-300 focus:border-cyan-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 bg-white text-[#003366] font-bold px-3.5 py-2 text-xs font-mono focus:border-[#003366] focus:outline-none"
               />
             </div>
 
             {/* Disclosure Mode Selector */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                 DPDP Cryptographic Disclosure Mode
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -313,15 +313,15 @@ export default function ConsentWalletPage() {
                   onClick={() => setDisclosureMode("ZERO_EXPOSURE_PREDICATE")}
                   className={`p-3 rounded-xl border text-left transition-all ${
                     disclosureMode === "ZERO_EXPOSURE_PREDICATE"
-                      ? "border-emerald-500 bg-emerald-950/40 text-emerald-300 font-bold"
-                      : "border-slate-200 bg-slate-50 text-slate-600 hover:text-white"
+                      ? "border-emerald-600 bg-emerald-50 text-emerald-950 font-bold shadow-xs"
+                      : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 text-xs">
-                    <EyeOff className="h-4 w-4 text-emerald-400" />
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900">
+                    <EyeOff className="h-4 w-4 text-[#046A38]" />
                     <span>Zero-Exposure Predicate</span>
                   </div>
-                  <p className="text-[10px] text-slate-600 font-normal mt-1 leading-tight">
+                  <p className="text-[10px] text-slate-700 font-medium mt-1 leading-tight">
                     Signed boolean proof only. Zero personal data disclosed.
                   </p>
                 </button>
@@ -331,15 +331,15 @@ export default function ConsentWalletPage() {
                   onClick={() => setDisclosureMode("SD_JWT_SELECTIVE")}
                   className={`p-3 rounded-xl border text-left transition-all ${
                     disclosureMode === "SD_JWT_SELECTIVE"
-                      ? "border-cyan-500 bg-cyan-950/40 text-cyan-300 font-bold"
-                      : "border-slate-200 bg-slate-50 text-slate-600 hover:text-white"
+                      ? "border-[#003366] bg-blue-50 text-[#003366] font-bold shadow-xs"
+                      : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 text-xs">
-                    <KeyRound className="h-4 w-4 text-cyan-400" />
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#003366]">
+                    <KeyRound className="h-4 w-4 text-[#003366]" />
                     <span>IETF SD-JWT Selective</span>
                   </div>
-                  <p className="text-[10px] text-slate-600 font-normal mt-1 leading-tight">
+                  <p className="text-[10px] text-slate-700 font-medium mt-1 leading-tight">
                     Disclose approved fields; blind sensitive fields in SHA-256 digests.
                   </p>
                 </button>
@@ -417,7 +417,7 @@ export default function ConsentWalletPage() {
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div>
                 <div className="flex items-center gap-2 font-bold text-[#003366] text-base">
-                  <Lock className="h-5 w-5 text-amber-400" />
+                  <Lock className="h-5 w-5 text-amber-600" />
                   Student Sovereign Consent Wallet
                 </div>
                 <p className="text-xs text-slate-600 mt-0.5">
@@ -427,7 +427,7 @@ export default function ConsentWalletPage() {
 
               <button
                 onClick={() => loadStudentRequests(selectedStudentApaar)}
-                className="text-slate-600 hover:text-white"
+                className="text-slate-600 hover:text-[#003366]"
                 title="Refresh consent queue"
               >
                 <RefreshCw className={`h-4 w-4 ${loadingQueue ? "animate-spin" : ""}`} />
@@ -437,7 +437,7 @@ export default function ConsentWalletPage() {
             {/* Request Queue */}
             <div className="space-y-3 max-h-56 overflow-y-auto pr-1 scrollbar-thin">
               {consentQueue.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-500">
+                <div className="rounded-xl border border-dashed border-slate-300 p-6 text-center text-xs text-slate-700 font-medium bg-slate-50/50">
                   No consent requests currently pending for APAAR {selectedStudentApaar}.
                   Use Panel 1 on the left to dispatch a request!
                 </div>
@@ -454,26 +454,26 @@ export default function ConsentWalletPage() {
                       }}
                       className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
                         isSelected
-                          ? "border-amber-500 bg-amber-950/30"
+                          ? "border-amber-400 bg-amber-50/80 shadow-xs"
                           : "border-slate-200 bg-slate-50 hover:border-slate-300"
                       }`}
                     >
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-white truncate max-w-[200px]">
+                        <span className="font-bold text-slate-900 truncate max-w-[200px]">
                           {item.requester_name}
                         </span>
                         <span
                           className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                             isPending
-                              ? "bg-amber-950 text-amber-300 border border-amber-800 animate-pulse"
-                              : "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                              ? "bg-amber-100 text-amber-900 border border-amber-300 animate-pulse"
+                              : "bg-emerald-100 text-emerald-900 border border-emerald-300"
                           }`}
                         >
                           {item.status}
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between text-[11px] text-slate-600 font-mono mt-1">
+                      <div className="flex items-center justify-between text-[11px] text-slate-700 font-mono mt-1 font-medium">
                         <span>Role: {item.requester_role}</span>
                         <span>Mode: {item.disclosure_mode}</span>
                       </div>
@@ -487,10 +487,10 @@ export default function ConsentWalletPage() {
             {selectedConsentId && (
               <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
                 <div className="flex items-center justify-between">
-                  <div className="text-xs font-bold text-white">
+                  <div className="text-xs font-bold text-[#003366]">
                     Selectively Approve Attributes
                   </div>
-                  <span className="text-[10px] text-slate-600">
+                  <span className="text-[10px] text-slate-700 font-medium">
                     Uncheck sensitive fields to cryptographically blind them
                   </span>
                 </div>
@@ -501,13 +501,13 @@ export default function ConsentWalletPage() {
                     return (
                       <label
                         key={attr.id}
-                        className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-white"
+                        className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-slate-950 font-medium"
                       >
                         <input
                           type="checkbox"
                           checked={checked}
                           onChange={() => toggleApprovedField(attr.id)}
-                          className="accent-emerald-500 rounded"
+                          className="accent-[#003366] rounded"
                         />
                         <span className={!checked ? "text-slate-500 line-through" : ""}>
                           {attr.label}
@@ -519,15 +519,15 @@ export default function ConsentWalletPage() {
 
                 {/* Authentication Method Selector */}
                 <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-600">Auth Method:</span>
+                  <span className="font-bold text-slate-700">Auth Method:</span>
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={() => setApprovalMethod("WEBAUTHN")}
-                      className={`px-2.5 py-1 rounded text-xs font-semibold ${
+                      className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
                         approvalMethod === "WEBAUTHN"
-                          ? "bg-emerald-500 text-slate-950 font-bold"
-                          : "bg-slate-50 text-slate-600"
+                          ? "bg-[#003366] text-white font-bold shadow-xs"
+                          : "bg-white border border-slate-300 text-slate-700 hover:bg-slate-50"
                       }`}
                     >
                       WebAuthn Passkey
@@ -535,10 +535,10 @@ export default function ConsentWalletPage() {
                     <button
                       type="button"
                       onClick={() => setApprovalMethod("OTP")}
-                      className={`px-2.5 py-1 rounded text-xs font-semibold ${
+                      className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
                         approvalMethod === "OTP"
-                          ? "bg-emerald-500 text-slate-950 font-bold"
-                          : "bg-slate-50 text-slate-600"
+                          ? "bg-[#003366] text-white font-bold shadow-xs"
+                          : "bg-white border border-slate-300 text-slate-700 hover:bg-slate-50"
                       }`}
                     >
                       DigiLocker OTP
@@ -578,14 +578,14 @@ export default function ConsentWalletPage() {
                 <ShieldCheck className="h-3.5 w-3.5" />
                 CRYPTOGRAPHIC DPDP DISCLOSURE PROOF
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-white mt-1">
+              <h2 className="text-xl sm:text-2xl font-black text-[#003366] mt-1">
                 Verifiable Presentation Issued ({proofResult.disclosure_mode})
               </h2>
             </div>
 
             <div className="flex items-center gap-3 font-mono text-xs">
-              <span className="text-slate-600">Merkle Seq:</span>
-              <span className="rounded bg-slate-50 px-2 py-0.5 text-cyan-400 font-bold border border-slate-200">
+              <span className="text-slate-700 font-semibold">Merkle Seq:</span>
+              <span className="rounded bg-blue-50 px-2 py-0.5 text-[#003366] font-bold border border-blue-200">
                 #{proofResult.audit_sequence_number}
               </span>
             </div>
@@ -593,20 +593,20 @@ export default function ConsentWalletPage() {
 
           {/* Mode A: Zero-Exposure Predicate Proof */}
           {proofResult.predicate_assertion && (
-            <div className="space-y-4 rounded-xl border border-emerald-800/60 bg-emerald-950/30 p-5">
+            <div className="space-y-4 rounded-xl border border-emerald-200 bg-emerald-50 p-5 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-emerald-300 text-sm flex items-center gap-1.5">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                <span className="font-bold text-emerald-950 text-sm flex items-center gap-1.5">
+                  <CheckCircle2 className="h-5 w-5 text-[#046A38]" />
                   Ed25519-Signed Predicate Assertion
                 </span>
-                <span className="rounded bg-emerald-950 px-2.5 py-0.5 text-xs font-mono font-bold text-emerald-300 border border-emerald-700">
+                <span className="rounded bg-emerald-100 px-2.5 py-0.5 text-xs font-mono font-bold text-emerald-900 border border-emerald-300">
                   RESULT: TRUE (CONFIRMED)
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
                 <div>
-                  <div className="text-[10px] text-slate-600 uppercase font-sans">
+                  <div className="text-[10px] text-slate-700 uppercase font-sans font-bold">
                     Predicate Query
                   </div>
                   <div className="text-[#003366] font-bold mt-0.5">
@@ -615,46 +615,46 @@ export default function ConsentWalletPage() {
                 </div>
 
                 <div>
-                  <div className="text-[10px] text-slate-600 uppercase font-sans">
+                  <div className="text-[10px] text-slate-700 uppercase font-sans font-bold">
                     Subject APAAR ID
                   </div>
-                  <div className="text-cyan-300 font-bold mt-0.5">
+                  <div className="text-[#003366] font-bold mt-0.5">
                     {proofResult.predicate_assertion.apaar_id}
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-[10px] text-slate-600 uppercase font-sans">
+                  <div className="text-[10px] text-slate-700 uppercase font-sans font-bold">
                     Issuer Sovereign Authority
                   </div>
-                  <div className="text-slate-800 mt-0.5">
+                  <div className="text-slate-900 font-medium mt-0.5">
                     {proofResult.predicate_assertion.issuer}
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-[10px] text-slate-600 uppercase font-sans">
+                  <div className="text-[10px] text-slate-700 uppercase font-sans font-bold">
                     Verification Timestamp
                   </div>
-                  <div className="text-slate-800 mt-0.5">
+                  <div className="text-slate-900 font-medium mt-0.5">
                     {proofResult.predicate_assertion.verified_at}
                   </div>
                 </div>
               </div>
 
               {/* Signature Proof Box */}
-              <div className="rounded-lg bg-white p-3 space-y-1.5 font-mono text-[11px] border border-slate-200">
-                <div className="text-slate-600 flex justify-between">
+              <div className="rounded-lg bg-white p-3 space-y-1.5 font-mono text-[11px] border border-slate-200 shadow-2xs">
+                <div className="text-slate-700 font-semibold flex justify-between">
                   <span>Ed25519 Digital Signature:</span>
-                  <span className="text-emerald-400">VALID AUTHENTICATION</span>
+                  <span className="text-[#046A38] font-bold">VALID AUTHENTICATION</span>
                 </div>
-                <div className="text-cyan-400 break-all">
+                <div className="text-[#003366] font-bold break-all">
                   {proofResult.predicate_assertion.ed25519_signature}
                 </div>
               </div>
 
-              <div className="rounded-lg bg-emerald-950/60 p-3 text-xs text-emerald-200 border border-emerald-800/40">
-                <strong>Zero PII Exposure Guarantee:</strong> The employer received a mathematically
+              <div className="rounded-lg bg-white p-3 text-xs text-emerald-950 border border-emerald-200 font-medium leading-relaxed shadow-2xs">
+                <strong className="text-emerald-900">Zero PII Exposure Guarantee:</strong> The employer received a mathematically
                 unforgeable proof confirming active enrolment in an AICTE-approved program without
                 accessing the student&apos;s date of birth, category, gender, or marks.
               </div>
@@ -663,30 +663,30 @@ export default function ConsentWalletPage() {
 
           {/* Mode B: SD-JWT Selective Disclosure Proof */}
           {proofResult.sd_jwt && (
-            <div className="space-y-4 rounded-xl border border-cyan-800/60 bg-cyan-950/20 p-5">
+            <div className="space-y-4 rounded-xl border border-blue-200 bg-blue-50/40 p-5 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-cyan-300 text-sm flex items-center gap-1.5">
-                  <KeyRound className="h-5 w-5 text-cyan-400" />
+                <span className="font-bold text-[#003366] text-sm flex items-center gap-1.5">
+                  <KeyRound className="h-5 w-5 text-[#003366]" />
                   IETF Selective Disclosure JSON Web Token (SD-JWT)
                 </span>
-                <span className="text-xs text-slate-600 font-mono">
+                <span className="text-xs text-slate-700 font-mono font-semibold">
                   Subject: {proofResult.sd_jwt.subject}
                 </span>
               </div>
 
               {/* Disclosed Attributes */}
               <div className="space-y-2">
-                <div className="text-xs font-bold text-emerald-400">
+                <div className="text-xs font-bold text-emerald-900">
                   Disclosed Attributes (Approved by Student)
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
                   {Object.entries(proofResult.sd_jwt.disclosed_claims || {}).map(([key, val]) => (
                     <div
                       key={key}
-                      className="rounded-lg bg-white p-2.5 border border-emerald-900/40 flex justify-between"
+                      className="rounded-lg bg-white p-2.5 border border-emerald-200 flex justify-between shadow-2xs"
                     >
-                      <span className="text-slate-600">{key}:</span>
-                      <span className="text-emerald-300 font-bold">{String(val)}</span>
+                      <span className="text-slate-700 font-medium">{key}:</span>
+                      <span className="text-emerald-900 font-bold">{String(val)}</span>
                     </div>
                   ))}
                 </div>
@@ -695,17 +695,17 @@ export default function ConsentWalletPage() {
               {/* Blinded Claims */}
               {proofResult.sd_jwt.blinded_claims && proofResult.sd_jwt.blinded_claims.length > 0 && (
                 <div className="space-y-2">
-                  <div className="text-xs font-bold text-amber-400">
+                  <div className="text-xs font-bold text-amber-900">
                     Cryptographically Blinded Claims (_sd Digest Hashes)
                   </div>
                   <div className="space-y-1.5 text-xs font-mono">
                     {proofResult.sd_jwt.blinded_claims.map((claim) => (
                       <div
                         key={claim}
-                        className="rounded-lg bg-white p-2 border border-amber-900/40 flex justify-between items-center"
+                        className="rounded-lg bg-white p-2 border border-amber-200 flex justify-between items-center shadow-2xs"
                       >
-                        <span className="text-amber-300">{claim}:</span>
-                        <span className="text-[10px] text-slate-500 font-mono">
+                        <span className="text-amber-950 font-bold">{claim}:</span>
+                        <span className="text-[10px] text-slate-700 font-mono font-semibold">
                           SHA256_SALTED_DIGEST_MASKED (Unexposed)
                         </span>
                       </div>
@@ -715,12 +715,12 @@ export default function ConsentWalletPage() {
               )}
 
               {/* Signature Proof Box */}
-              <div className="rounded-lg bg-white p-3 space-y-1.5 font-mono text-[11px] border border-slate-200">
-                <div className="text-slate-600 flex justify-between">
+              <div className="rounded-lg bg-white p-3 space-y-1.5 font-mono text-[11px] border border-slate-200 shadow-2xs">
+                <div className="text-slate-700 font-semibold flex justify-between">
                   <span>Ed25519 Issuer Signature:</span>
-                  <span className="text-cyan-400">IETF SD-JWT SIGNATURE VALID</span>
+                  <span className="text-[#046A38] font-bold">IETF SD-JWT SIGNATURE VALID</span>
                 </div>
-                <div className="text-cyan-400 break-all">
+                <div className="text-[#003366] font-bold break-all">
                   {proofResult.sd_jwt.ed25519_signature}
                 </div>
               </div>

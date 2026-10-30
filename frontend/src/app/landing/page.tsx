@@ -69,24 +69,24 @@ export default function LandingPage() {
       {/* Official Government Validation Metrics Row */}
       <section className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:grid-cols-4">
         <div className="border-r border-slate-100 last:border-0 pr-4">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-500">Coverage</div>
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-700">Coverage</div>
           <div className="mt-1 font-mono text-3xl font-extrabold text-[#003366]">50</div>
-          <div className="mt-1 text-xs text-slate-600">Institutions across 10 States</div>
+          <div className="mt-1 text-xs text-slate-700 font-medium">Institutions across 10 States</div>
         </div>
         <div className="border-r border-slate-100 last:border-0 pr-4">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-500">Algorithm</div>
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-700">Algorithm</div>
           <div className="mt-1 font-mono text-3xl font-extrabold text-[#003366]">D₅ Check</div>
-          <div className="mt-1 text-xs text-slate-600">Verhoeff Dihedral Checksum</div>
+          <div className="mt-1 text-xs text-slate-700 font-medium">Verhoeff Dihedral Checksum</div>
         </div>
         <div className="border-r border-slate-100 last:border-0 pr-4">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-500">Cryptographic Seal</div>
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-700">Cryptographic Seal</div>
           <div className="mt-1 font-mono text-3xl font-extrabold text-[#003366]">SHA-256</div>
-          <div className="mt-1 text-xs text-slate-600">Multi-Node Merkle Audit Ledger</div>
+          <div className="mt-1 text-xs text-slate-700 font-medium">Multi-Node Merkle Audit Ledger</div>
         </div>
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-500">Privacy Mandate</div>
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-700">Privacy Mandate</div>
           <div className="mt-1 font-mono text-3xl font-extrabold text-[#046A38]">DPDP Act</div>
-          <div className="mt-1 text-xs text-slate-600">Zero-Exposure Selective Disclosure</div>
+          <div className="mt-1 text-xs text-slate-700 font-medium">Zero-Exposure Selective Disclosure</div>
         </div>
       </section>
 
@@ -99,7 +99,7 @@ export default function LandingPage() {
           <h2 className="text-2xl font-bold tracking-tight text-[#003366] mt-0.5">
             Statutory Governance & Quota Architecture
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-slate-700 font-medium">
             Engineered to eliminate false quota violations, safeguard student privacy, and enforce national statutory guidelines.
           </p>
         </div>
@@ -113,7 +113,7 @@ export default function LandingPage() {
             <h3 className="text-base font-bold text-[#003366]">
               Statutory Supernumerary Quota Ledger
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
               Strictly distinguishes base sanctioned intake from statutory 15% supernumerary seats
               (Foreign Nationals, OCI, CIWGC, PMSSS, TFW) under APH 2024–27 guidelines, preventing false penalty issuance.
             </p>
@@ -127,7 +127,7 @@ export default function LandingPage() {
             <h3 className="text-base font-bold text-[#003366]">
               Cross-State Enrolment Intelligence
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
               Jaro-Winkler phonetic disambiguation flags fraudulent concurrent regular admissions
               while lawfully recognizing dual-degree programs (e.g., physical engineering + online degree).
             </p>
@@ -141,7 +141,7 @@ export default function LandingPage() {
             <h3 className="text-base font-bold text-[#003366]">
               Cryptographic SHA-256 Audit Ledger
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
               PostgreSQL row-level SHA-256 hash chaining with Ed25519 digital signatures.
               Prevents retroactive backdated record tampering with instant mathematical tamper detection.
             </p>
@@ -155,7 +155,7 @@ export default function LandingPage() {
             <h3 className="text-base font-bold text-[#003366]">
               DPDP Act Zero-Exposure Consent Wallet
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-700 font-medium leading-relaxed">
               Enables students to generate cryptographic zero-exposure verification proofs (e.g. proof of age 18+,
               valid CGPA &gt; 7.5) for employers and agencies without disclosing raw identifiers.
             </p>
@@ -172,7 +172,7 @@ export default function LandingPage() {
           <h2 className="text-2xl font-bold tracking-tight text-[#003366] mt-0.5">
             Operational Portals & Workspaces
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-slate-700 font-medium">
             Dedicated portals configured for statutory compliance officers, institutional registrars, intelligence officers, and students.
           </p>
         </div>
@@ -186,10 +186,10 @@ export default function LandingPage() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-[#003366]">
                 <Globe className="h-4 w-4" />
               </div>
-              <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#003366] transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-[#003366] transition-transform group-hover:translate-x-1" />
             </div>
             <div className="mt-3 text-sm font-bold text-[#003366]">National Command</div>
-            <p className="mt-1 text-xs text-slate-600 leading-normal">
+            <p className="mt-1 text-xs text-slate-700 font-medium leading-normal">
               Statewide telemetry, APH statutory quota comparisons, and Merkle audit verification.
             </p>
           </Link>
@@ -202,10 +202,10 @@ export default function LandingPage() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-[#0A4D8C]">
                 <Building2 className="h-4 w-4" />
               </div>
-              <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#003366] transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-[#003366] transition-transform group-hover:translate-x-1" />
             </div>
             <div className="mt-3 text-sm font-bold text-[#003366]">Institution Registrar</div>
-            <p className="mt-1 text-xs text-slate-600 leading-normal">
+            <p className="mt-1 text-xs text-slate-700 font-medium leading-normal">
               ERP schema drift mapping, sandbox validation diffs, and cryptographic batch commit.
             </p>
           </Link>
@@ -218,10 +218,10 @@ export default function LandingPage() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-purple-700">
                 <BrainCircuit className="h-4 w-4" />
               </div>
-              <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#003366] transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-[#003366] transition-transform group-hover:translate-x-1" />
             </div>
             <div className="mt-3 text-sm font-bold text-[#003366]">Intelligence Chamber</div>
-            <p className="mt-1 text-xs text-slate-600 leading-normal">
+            <p className="mt-1 text-xs text-slate-700 font-medium leading-normal">
               Ghost-ring graph analysis, risk rankings, and tri-party dispute resolution console.
             </p>
           </Link>
@@ -234,10 +234,10 @@ export default function LandingPage() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-800">
                 <Lock className="h-4 w-4" />
               </div>
-              <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#003366] transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-[#003366] transition-transform group-hover:translate-x-1" />
             </div>
             <div className="mt-3 text-sm font-bold text-[#003366]">Consent Wallet</div>
-            <p className="mt-1 text-xs text-slate-600 leading-normal">
+            <p className="mt-1 text-xs text-slate-700 font-medium leading-normal">
               DPDP Act zero-exposure predicate verification and selective attribute disclosure.
             </p>
           </Link>
@@ -250,10 +250,10 @@ export default function LandingPage() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-[#046A38]">
                 <Award className="h-4 w-4" />
               </div>
-              <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#003366] transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-[#003366] transition-transform group-hover:translate-x-1" />
             </div>
             <div className="mt-3 text-sm font-bold text-[#003366]">Degree Studio</div>
-            <p className="mt-1 text-xs text-slate-600 leading-normal">
+            <p className="mt-1 text-xs text-slate-700 font-medium leading-normal">
               Official degree parchment issuance and stateless offline QR verification engine.
             </p>
           </Link>

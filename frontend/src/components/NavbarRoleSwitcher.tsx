@@ -151,7 +151,7 @@ export function NavbarRoleSwitcher() {
               </div>
               <p className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
                 <span>National Student Data & Quota Verification</span>
-                <span className="text-slate-400 hidden sm:inline">•</span>
+                <span className="text-slate-500 hidden sm:inline">•</span>
                 <span className="text-[#0A4D8C] font-bold hidden sm:inline">Multi-Institution Statutory Ledger</span>
               </p>
             </div>
@@ -174,7 +174,7 @@ export function NavbarRoleSwitcher() {
 
             {/* DB Ready Status */}
             <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-700 font-medium">
-              <Database className="h-3.5 w-3.5 text-slate-500" />
+              <Database className="h-3.5 w-3.5 text-[#003366]" />
               <span
                 className={`h-2 w-2 rounded-full ${
                   dbReady === true
@@ -261,12 +261,12 @@ export function NavbarRoleSwitcher() {
                   </h4>
                   <button
                     onClick={() => setShowReseedToast(false)}
-                    className="text-slate-400 hover:text-slate-700"
+                    className="text-slate-500 hover:text-slate-900 font-bold"
                   >
                     ✕
                   </button>
                 </div>
-                <p className="mt-1 text-slate-600 font-medium">
+                <p className="mt-1 text-slate-700 font-medium">
                   {reseedResult.institutions_seeded} institutions, {reseedResult.quotas_seeded} statutory quotas, and{" "}
                   {reseedResult.students_seeded} student records updated.
                 </p>

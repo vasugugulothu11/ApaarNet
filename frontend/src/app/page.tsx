@@ -160,15 +160,15 @@ export default function NationalCommandPage() {
       {/* 1. Header & KPI Strip */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 sm:p-8 space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1 max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-[#003366]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#003366]" />
-              <span>National Overview</span>
+          <div className="space-y-1.5 max-w-3xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-[#003366] shadow-2xs">
+              <span className="h-2 w-2 rounded-full bg-[#FF7A1A]" />
+              <span>National Statutory Telemetry · 50 Monitored Institutions</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#003366] pt-1">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#003366] pt-1">
               National Command Center
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
               Continuous telemetry across 50 institutions in 10 states. Enforces statutory quota carve-outs,
               detects cross-institution concurrent enrolments, and maintains an immutable SHA-256 Merkle audit ledger.
             </p>
@@ -218,73 +218,73 @@ export default function NationalCommandPage() {
       {/* KPI Cards Grid */}
       <div id="telemetry" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-600">
-            <span className="text-[11px] font-medium uppercase tracking-wide">Institutions</span>
-            <Building2 className="h-4 w-4 text-[#0A4D8C]" />
+          <div className="flex items-center justify-between text-slate-700">
+            <span className="text-[11px] font-bold uppercase tracking-wide">Institutions</span>
+            <Building2 className="h-4 w-4 text-[#003366]" />
           </div>
-          <div className="mt-2 text-2xl font-semibold text-[#003366]">
+          <div className="mt-2 text-2xl font-black text-[#003366]">
             {loadingTelemetry ? "..." : telemetry?.total_institutions ?? "50"}
           </div>
-          <p className="mt-1 text-[11px] text-slate-600">10 States Monitored</p>
+          <p className="mt-1 text-[11px] text-slate-600 font-medium">10 States Monitored</p>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-600">
-            <span className="text-[11px] font-medium uppercase tracking-wide">Total Enrolled</span>
-            <Users className="h-4 w-4 text-[#0A4D8C]" />
+          <div className="flex items-center justify-between text-slate-700">
+            <span className="text-[11px] font-bold uppercase tracking-wide">Total Enrolled</span>
+            <Users className="h-4 w-4 text-[#003366]" />
           </div>
-          <div className="mt-2 text-2xl font-semibold text-[#003366]">
+          <div className="mt-2 text-2xl font-black text-[#003366]">
             {loadingTelemetry
               ? "..."
               : telemetry?.total_students_enrolled.toLocaleString() ?? "1,432"}
           </div>
-          <p className="mt-1 text-[11px] text-slate-600">Validated Enrolments</p>
+          <p className="mt-1 text-[11px] text-slate-600 font-medium">Validated Enrolments</p>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-600">
-            <span className="text-[11px] font-medium uppercase tracking-wide">APAAR Coverage</span>
-            <ShieldCheck className="h-4 w-4 text-slate-600" />
+          <div className="flex items-center justify-between text-slate-700">
+            <span className="text-[11px] font-bold uppercase tracking-wide">APAAR Coverage</span>
+            <ShieldCheck className="h-4 w-4 text-[#046A38]" />
           </div>
-          <div className="mt-2 text-2xl font-semibold text-emerald-400">
+          <div className="mt-2 text-2xl font-black text-[#046A38]">
             {loadingTelemetry ? "..." : `${telemetry?.verified_apaar_coverage_pct ?? 92.4}%`}
           </div>
-          <p className="mt-1 text-[11px] text-slate-600">Verhoeff D₅ Validated</p>
+          <p className="mt-1 text-[11px] text-slate-600 font-medium">Verhoeff D₅ Validated</p>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-600">
-            <span className="text-[11px] font-medium uppercase tracking-wide">Approved Intake</span>
-            <TrendingUp className="h-4 w-4 text-[#0A4D8C]" />
+          <div className="flex items-center justify-between text-slate-700">
+            <span className="text-[11px] font-bold uppercase tracking-wide">Approved Intake</span>
+            <TrendingUp className="h-4 w-4 text-[#003366]" />
           </div>
-          <div className="mt-2 text-2xl font-semibold text-[#003366]">
+          <div className="mt-2 text-2xl font-black text-[#003366]">
             {loadingTelemetry
               ? "..."
               : telemetry?.total_approved_intake.toLocaleString() ?? "3,180"}
           </div>
-          <p className="mt-1 text-[11px] text-slate-600">Sanctioned Base Capacity</p>
+          <p className="mt-1 text-[11px] text-slate-600 font-medium">Sanctioned Base Capacity</p>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-600">
-            <span className="text-[11px] font-medium uppercase tracking-wide">Active Flags</span>
-            <AlertOctagon className="h-4 w-4 text-rose-400" />
+          <div className="flex items-center justify-between text-slate-700">
+            <span className="text-[11px] font-bold uppercase tracking-wide">Active Flags</span>
+            <AlertOctagon className="h-4 w-4 text-rose-600" />
           </div>
-          <div className="mt-2 text-2xl font-semibold text-rose-400">
+          <div className="mt-2 text-2xl font-black text-rose-700">
             {loadingTelemetry ? "..." : telemetry?.active_flagged_violations ?? "6"}
           </div>
-          <p className="mt-1 text-[11px] text-slate-600">Intake Excess Detected</p>
+          <p className="mt-1 text-[11px] text-slate-600 font-medium">Intake Excess Detected</p>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-600">
-            <span className="text-[11px] font-medium uppercase tracking-wide">Disputes</span>
-            <Scale className="h-4 w-4 text-amber-400" />
+          <div className="flex items-center justify-between text-slate-700">
+            <span className="text-[11px] font-bold uppercase tracking-wide">Disputes</span>
+            <Scale className="h-4 w-4 text-amber-600" />
           </div>
-          <div className="mt-2 text-2xl font-semibold text-amber-400">
+          <div className="mt-2 text-2xl font-black text-amber-700">
             {loadingTelemetry ? "..." : telemetry?.open_tri_party_disputes ?? "2"}
           </div>
-          <p className="mt-1 text-[11px] text-slate-600">Inter-State Collisions</p>
+          <p className="mt-1 text-[11px] text-slate-600 font-medium">Inter-State Collisions</p>
         </div>
       </div>
 
@@ -338,7 +338,7 @@ export default function NationalCommandPage() {
               {/* FN / OCI / CIWGC Supernumerary */}
               <div>
                 <div className="flex justify-between text-xs text-[#003366] mb-1">
-                  <span className="text-emerald-400">
+                  <span className="text-[#046A38] font-semibold">
                     Foreign National / OCI / CIWGC (15% Supernumerary)
                   </span>
                   <span className="font-mono text-slate-600">
@@ -398,8 +398,8 @@ export default function NationalCommandPage() {
               {/* TFW Supernumerary */}
               <div>
                 <div className="flex justify-between text-xs text-[#003366] mb-1">
-                  <span className="text-amber-400">Tuition Fee Waiver (5% TFW)</span>
-                  <span className="font-mono text-slate-600">
+                  <span className="text-amber-800 font-bold">Tuition Fee Waiver (5% TFW)</span>
+                  <span className="font-mono text-slate-700 font-semibold">
                     {telemetry.seat_distribution.tfw_supernumerary} seats
                   </span>
                 </div>
@@ -464,7 +464,7 @@ export default function NationalCommandPage() {
         {/* Right 1 Col: Engine Verification Status */}
         <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 space-y-4">
           <h2 className="text-sm font-semibold text-[#003366] flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+            <CheckCircle2 className="h-4 w-4 text-[#046A38]" />
             Active Verification Engines
           </h2>
           <div className="space-y-3 text-xs">
@@ -555,13 +555,13 @@ export default function NationalCommandPage() {
                     </td>
                     <td className="py-2.5 px-3 font-sans">
                       {isOver ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-amber-400 font-medium">
-                          <AlertTriangle className="h-3 w-3" />
+                        <span className="inline-flex items-center gap-1 text-[11px] text-amber-800 font-semibold">
+                          <AlertTriangle className="h-3 w-3 text-amber-700" />
                           Supernumerary Active
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
-                          <CheckCircle2 className="h-3 w-3" />
+                        <span className="inline-flex items-center gap-1 text-[11px] text-[#046A38] font-semibold">
+                          <CheckCircle2 className="h-3 w-3 text-[#046A38]" />
                           Within Approved Cap
                         </span>
                       )}
@@ -634,16 +634,16 @@ export default function NationalCommandPage() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* Left Panel: Legacy Naive Flat Counter */}
-                <div className="rounded-xl border border-rose-200 bg-rose-50/70 border-rose-200 p-5 space-y-4">
+                <div className="rounded-xl border border-rose-200 bg-rose-50/70 p-5 space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="rounded bg-rose-950/80 px-2 py-0.5 text-xs font-semibold text-rose-300 border border-rose-300">
+                    <span className="rounded bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-900 border border-rose-300">
                       Standard Flat Counter
                     </span>
-                    <XCircle className="h-4 w-4 text-rose-400" />
+                    <XCircle className="h-4 w-4 text-rose-600" />
                   </div>
 
                   <div className="space-y-1">
-                    <div className="text-2xl font-bold text-rose-400 font-mono">
+                    <div className="text-2xl font-bold text-rose-700 font-mono">
                       {actualEnrolment} / {sanctionedIntake}
                     </div>
                     <p className="text-xs text-slate-600">
@@ -657,64 +657,64 @@ export default function NationalCommandPage() {
                       <span className="font-mono text-[#003366]">{naiveCeiling} seats</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Actual Enrolment:</span>
-                      <span className="font-mono text-[#003366]">{actualEnrolment} students</span>
+                      <span className="text-slate-700 font-medium">Actual Enrolment:</span>
+                      <span className="font-mono text-[#003366] font-bold">{actualEnrolment} students</span>
                     </div>
-                    <div className="flex justify-between font-semibold border-t border-slate-200 pt-2 text-rose-300">
+                    <div className="flex justify-between font-semibold border-t border-slate-200 pt-2 text-rose-700">
                       <span>Apparent Over-Intake:</span>
-                      <span className="font-mono">+{naiveExcess} Flagged</span>
+                      <span className="font-mono font-bold">+{naiveExcess} Flagged</span>
                     </div>
                   </div>
 
-                  <div className="text-[11px] text-rose-300/80 leading-relaxed rounded bg-rose-100/70 text-rose-800 p-3 border border-rose-200">
-                    <span className="font-semibold">False-Positive Defect:</span> Treats 24 lawful OCI and 12 lawful CIWGC supernumerary admissions as illegal over-intake, erroneously triggering penalty flags.
+                  <div className="text-[11px] text-rose-900 leading-relaxed rounded bg-rose-100/70 p-3 border border-rose-200">
+                    <span className="font-bold text-rose-950">False-Positive Defect:</span> Treats 24 lawful OCI and 12 lawful CIWGC supernumerary admissions as illegal over-intake, erroneously triggering penalty flags.
                   </div>
                 </div>
 
                 {/* Right Panel: Statutory Quota Ledger */}
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 border-emerald-200 p-5 space-y-4">
+                <div className="rounded-xl border border-emerald-300 bg-emerald-50/70 p-5 space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="rounded bg-emerald-950/80 px-2 py-0.5 text-xs font-semibold text-emerald-900 border border-emerald-800/60">
+                    <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-900 border border-emerald-300">
                       ApaarNet Statutory Ledger
                     </span>
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    <CheckCircle2 className="h-4 w-4 text-[#046A38]" />
                   </div>
 
                   <div className="space-y-1">
-                    <div className="text-2xl font-bold text-emerald-400 font-mono">
+                    <div className="text-2xl font-bold text-[#046A38] font-mono">
                       {baseEnrolled} Base + {supernumeraryCarvedOut} Supernumerary
                     </div>
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs text-slate-700 font-medium">
                       Permitted Statutory Ceiling:{" "}
-                      <span className="font-semibold text-white font-mono">{totalPermittedCeiling} seats</span>
+                      <span className="font-bold text-slate-900 font-mono">{totalPermittedCeiling} seats</span>
                     </p>
                   </div>
 
-                  <div className="rounded-lg border border-emerald-900/30 bg-slate-50 p-3.5 space-y-2 text-xs">
+                  <div className="rounded-lg border border-emerald-200 bg-white p-3.5 space-y-2 text-xs shadow-2xs">
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Approved Base Intake:</span>
-                      <span className="font-mono text-[#003366]">{sanctionedIntake} seats</span>
+                      <span className="text-slate-700 font-medium">Approved Base Intake:</span>
+                      <span className="font-mono text-[#003366] font-bold">{sanctionedIntake} seats</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Lawful Supernumerary Protected:</span>
-                      <span className="font-mono text-emerald-400 font-semibold">+{supernumeraryCarvedOut} seats</span>
+                      <span className="text-slate-700 font-medium">Lawful Supernumerary Protected:</span>
+                      <span className="font-mono text-[#046A38] font-bold">+{supernumeraryCarvedOut} seats</span>
                     </div>
-                    <div className="flex justify-between font-semibold border-t border-slate-200 pt-2 text-emerald-900">
+                    <div className="flex justify-between font-semibold border-t border-slate-200 pt-2 text-emerald-950">
                       <span>True Regulatory Excess:</span>
-                      <span className="font-mono text-amber-400">{apaarnetExcess} Students</span>
+                      <span className="font-mono text-amber-800 font-bold">{apaarnetExcess} Students</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between rounded bg-emerald-100/70 text-emerald-800 p-3 border border-emerald-200 text-emerald-900 text-xs">
-                    <div className="font-medium">85.7% False-Positive Elimination</div>
-                    <div className="font-mono text-[11px]">36 Lawful Seats Validated</div>
+                  <div className="flex items-center justify-between rounded bg-emerald-100/80 p-3 border border-emerald-300 text-emerald-950 text-xs">
+                    <div className="font-bold">85.7% False-Positive Elimination</div>
+                    <div className="font-mono text-[11px] font-semibold">36 Lawful Seats Validated</div>
                   </div>
                 </div>
               </div>
 
               {/* Statutory Audit Summary */}
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">
-                <span className="font-semibold text-[#003366]">Statutory Audit Explanation:</span>{" "}
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-700 font-medium leading-relaxed">
+                <span className="font-bold text-[#003366]">Statutory Audit Explanation:</span>{" "}
                 {auditSummary}
               </div>
             </div>
@@ -752,7 +752,7 @@ export default function NationalCommandPage() {
             <span className="font-medium text-[#003366]">Ledger Integrity:</span>
             <span
               className={`inline-flex items-center gap-1 font-semibold ${
-                ledger?.chain_integrity_valid ? "text-emerald-400" : "text-rose-400"
+                ledger?.chain_integrity_valid ? "text-[#046A38]" : "text-rose-700"
               }`}
             >
               <ShieldCheck className="h-4 w-4" />
@@ -798,28 +798,28 @@ export default function NationalCommandPage() {
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 text-xs font-mono">
               <div className="rounded border border-rose-200 bg-slate-50 p-3 space-y-1">
-                <div className="text-[10px] text-slate-600 uppercase font-sans">1. Local Digest</div>
-                <div className="text-rose-400 font-semibold">Mismatch Detected ✗</div>
-                <div className="text-[10px] text-slate-600/70 truncate">
+                <div className="text-[10px] text-slate-700 font-semibold uppercase font-sans">1. Local Digest</div>
+                <div className="text-rose-700 font-bold">Mismatch Detected ✗</div>
+                <div className="text-[10px] text-slate-600 truncate">
                   Exp: {tamperResult.original_record_hash.substring(0, 16)}...
                 </div>
-                <div className="text-[10px] text-rose-300 truncate">
+                <div className="text-[10px] text-rose-800 font-semibold truncate">
                   Got: {tamperResult.tampered_record_hash.substring(0, 16)}...
                 </div>
               </div>
 
               <div className="rounded border border-rose-200 bg-slate-50 p-3 space-y-1">
-                <div className="text-[10px] text-slate-600 uppercase font-sans">2. Downstream Pointer</div>
-                <div className="text-rose-400 font-semibold">Chain Broken at Sequence ✗</div>
-                <div className="text-[10px] text-slate-600/70">
+                <div className="text-[10px] text-slate-700 font-semibold uppercase font-sans">2. Downstream Pointer</div>
+                <div className="text-rose-700 font-bold">Chain Broken at Sequence ✗</div>
+                <div className="text-[10px] text-slate-600">
                   Block prev_hash link invalidated by modified record.
                 </div>
               </div>
 
               <div className="rounded border border-rose-200 bg-slate-50 p-3 space-y-1">
-                <div className="text-[10px] text-slate-600 uppercase font-sans">3. Ed25519 Signature</div>
-                <div className="text-rose-400 font-semibold">Signature Rejected ✗</div>
-                <div className="text-[10px] text-slate-600/70">
+                <div className="text-[10px] text-slate-700 font-semibold uppercase font-sans">3. Ed25519 Signature</div>
+                <div className="text-rose-700 font-bold">Signature Rejected ✗</div>
+                <div className="text-[10px] text-slate-600">
                   Attacker lacks cryptographic private key to sign checkpoint.
                 </div>
               </div>
@@ -851,12 +851,12 @@ export default function NationalCommandPage() {
                   Hash: {entry.record_hash.substring(0, 16)}...
                 </div>
                 {entry.checkpoint_signature ? (
-                  <div className="rounded bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 text-[9px] text-emerald-400 flex items-center gap-1 font-sans">
-                    <CheckCircle2 className="h-3 w-3" />
+                  <div className="rounded bg-emerald-50 border border-emerald-300 px-2 py-0.5 text-[9px] text-[#046A38] font-bold flex items-center gap-1 font-sans">
+                    <CheckCircle2 className="h-3 w-3 text-[#046A38]" />
                     Ed25519 Checkpoint
                   </div>
                 ) : (
-                  <div className="text-[9px] text-slate-600/50 font-sans">Standard Transaction</div>
+                  <div className="text-[9px] text-slate-600 font-medium font-sans">Standard Transaction</div>
                 )}
               </div>
             ))}
@@ -867,10 +867,10 @@ export default function NationalCommandPage() {
       {/* 4. Accreditation & Policy Export Suite */}
       <div id="accreditation-exports" className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 sm:p-8 space-y-6">
         <div>
-          <h2 className="text-xl font-semibold text-[#003366]">
+          <h2 className="text-xl font-bold text-[#003366]">
             Accreditation & Policy Compliance Export Suite
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1">
+          <p className="text-xs sm:text-sm text-slate-700 font-medium mt-1">
             Standardized compliance packages downloadable as certified CSV datasets or structured JSON payloads.
           </p>
         </div>
@@ -954,13 +954,13 @@ export default function NationalCommandPage() {
           <div className="rounded-lg border border-slate-200 bg-slate-50 p-5 space-y-4 flex flex-col justify-between">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="rounded bg-white px-2 py-0.5 text-[10px] font-medium text-[#003366] border border-slate-200">
+                <span className="rounded bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-800 border border-rose-200">
                   Audit Vigilance
                 </span>
-                <AlertOctagon className="h-4 w-4 text-rose-400" />
+                <AlertOctagon className="h-4 w-4 text-rose-600" />
               </div>
-              <h3 className="font-semibold text-[#003366] text-sm">Anomaly & Inspection Summary</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h3 className="font-bold text-[#003366] text-sm">Anomaly & Inspection Summary</h3>
+              <p className="text-xs text-slate-700 font-medium leading-relaxed">
                 Audit list of flagged violations, quota overflow events, unverified tokens, and open
                 tri-party dispute tickets for regulatory inspection teams.
               </p>
