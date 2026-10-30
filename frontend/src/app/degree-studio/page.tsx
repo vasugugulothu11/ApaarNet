@@ -250,7 +250,7 @@ export default function DegreeStudioPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
+    <div className="max-w-[1600px] mx-auto p-6 sm:p-10 space-y-8">
       {/* Header */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 space-y-3">
         <div className="flex items-center gap-2">

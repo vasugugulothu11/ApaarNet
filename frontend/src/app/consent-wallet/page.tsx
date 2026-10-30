@@ -185,7 +185,7 @@ export default function ConsentWalletPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
+    <div className="max-w-[1600px] mx-auto p-6 sm:p-10 space-y-8">
       {/* Header */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 space-y-3">
         <div className="flex items-center gap-2">
@@ -216,10 +216,10 @@ export default function ConsentWalletPage() {
             <button
               key={stu.apaar_id}
               onClick={() => setSelectedStudentApaar(stu.apaar_id)}
-              className={`px-3 py-1.5 rounded-lg border font-mono transition-all ${
+              className={`px-3 py-1.5 rounded-lg border font-mono transition-all text-xs ${
                 selectedStudentApaar === stu.apaar_id
-                  ? "border-[#003366] bg-[#052659] text-[#003366] font-semibold"
-                  : "border-slate-300 bg-white text-slate-600 hover:border-[#003366] hover:text-[#003366]"
+                  ? "bg-blue-950 text-white font-semibold border-blue-950 shadow-sm"
+                  : "bg-white text-slate-800 border-slate-300 hover:bg-slate-100"
               }`}
             >
               {stu.name} ({stu.apaar_id})
@@ -313,12 +313,12 @@ export default function ConsentWalletPage() {
                   onClick={() => setDisclosureMode("ZERO_EXPOSURE_PREDICATE")}
                   className={`p-3 rounded-xl border text-left transition-all ${
                     disclosureMode === "ZERO_EXPOSURE_PREDICATE"
-                      ? "border-emerald-600 bg-emerald-50 text-emerald-950 font-bold shadow-xs"
+                      ? "bg-blue-50/90 border-2 border-blue-800 text-blue-950 font-bold shadow-xs"
                       : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900">
-                    <EyeOff className="h-4 w-4 text-[#046A38]" />
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-blue-950">
+                    <EyeOff className="h-4 w-4 text-[#003366]" />
                     <span>Zero-Exposure Predicate</span>
                   </div>
                   <p className="text-[10px] text-slate-700 font-medium mt-1 leading-tight">
@@ -331,11 +331,11 @@ export default function ConsentWalletPage() {
                   onClick={() => setDisclosureMode("SD_JWT_SELECTIVE")}
                   className={`p-3 rounded-xl border text-left transition-all ${
                     disclosureMode === "SD_JWT_SELECTIVE"
-                      ? "border-[#003366] bg-blue-50 text-[#003366] font-bold shadow-xs"
+                      ? "bg-blue-50/90 border-2 border-blue-800 text-blue-950 font-bold shadow-xs"
                       : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#003366]">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-blue-950">
                     <KeyRound className="h-4 w-4 text-[#003366]" />
                     <span>IETF SD-JWT Selective</span>
                   </div>
@@ -358,15 +358,15 @@ export default function ConsentWalletPage() {
                     return (
                       <label
                         key={attr.id}
-                        className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-white"
+                        className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-slate-950"
                       >
                         <input
                           type="checkbox"
                           checked={checked}
                           onChange={() => toggleRequestedAttribute(attr.id)}
-                          className="accent-cyan-500 rounded"
+                          className="accent-[#003366] rounded"
                         />
-                        <span className={attr.sensitive ? "text-amber-300" : ""}>
+                        <span className={attr.sensitive ? "text-amber-800 font-semibold" : ""}>
                           {attr.label}
                           {attr.sensitive ? " (Sensitive)" : ""}
                         </span>
@@ -397,9 +397,9 @@ export default function ConsentWalletPage() {
             <button
               onClick={handleDispatchRequest}
               disabled={dispatchingRequest}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 py-3 text-xs font-bold text-slate-950 hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20 disabled:opacity-50"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-900 hover:bg-blue-950 text-white font-semibold py-3 text-xs shadow-sm transition-colors disabled:bg-slate-200 disabled:text-slate-600 disabled:opacity-100"
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-4 w-4 text-amber-300" />
               <span>
                 {dispatchingRequest
                   ? "Dispatching Request..."
@@ -554,7 +554,7 @@ export default function ConsentWalletPage() {
             <button
               onClick={() => selectedConsentId && handleApproveConsent(selectedConsentId)}
               disabled={approving || !selectedConsentId}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-xs font-bold text-slate-950 hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-3 text-xs shadow-sm transition-colors disabled:bg-slate-200 disabled:text-slate-600 disabled:opacity-100"
             >
               <Fingerprint className="h-4 w-4" />
               <span>
@@ -571,14 +571,14 @@ export default function ConsentWalletPage() {
       {/* PANEL 3: CRYPTOGRAPHIC PROOF INSPECTOR                        */}
       {/* ============================================================== */}
       {proofResult && (
-        <div className="rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-slate-900 to-slate-950 p-6 sm:p-8 space-y-6 shadow-2xl animate-in fade-in duration-300">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 space-y-6 shadow-sm animate-in fade-in duration-300">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
             <div>
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-950/70 px-3 py-0.5 text-xs font-bold text-emerald-300">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-0.5 text-xs font-bold text-[#046A38]">
                 <ShieldCheck className="h-3.5 w-3.5" />
                 CRYPTOGRAPHIC DPDP DISCLOSURE PROOF
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-[#003366] mt-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#003366] mt-1">
                 Verifiable Presentation Issued ({proofResult.disclosure_mode})
               </h2>
             </div>

@@ -1,16 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F8FAFC;
-  --foreground: #0F172A;
+  --background: #FCFFF4;
+  --foreground: #0B0F19;
   --surface: #FFFFFF;
-  --surface-muted: #F1F5F9;
-  --border: #E2E8F0;
-  --border-muted: #CBD5E1;
-  --muted: #64748B;
-  --accent: #003366;
-  --accent-light: #E0E7FF;
-  --aicte-navy: #003366;
+  --surface-muted: #F7FFDD;
+  --border: #F2FFC7;
+  --border-muted: #EDFFB1;
+  --muted: #475569;
+
+  /* Executive Brand Palette from Specification */
+  --brand-base: #E5FF8F;
+  --brand-tint1: #EDFFB1;
+  --brand-tint2: #F2FFC7;
+  --brand-tint3: #F7FFDD;
+  --brand-tint4: #FCFFF4;
+  --brand-dark: #0B0F19;
+  --brand-black: #000000;
+
+  --accent: #E5FF8F;
+  --accent-light: #EDFFB1;
+  --aicte-navy: #0B0F19;
   --aicte-blue: #0A4D8C;
   --aicte-saffron: #FF7A1A;
   --aicte-green: #046A38;
@@ -22,13 +32,21 @@
   --font-sans: var(--font-inter), var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-geist-mono);
 
-  --color-aicte-navy: #003366;
+  --color-brand-base: #E5FF8F;
+  --color-brand-tint1: #EDFFB1;
+  --color-brand-tint2: #F2FFC7;
+  --color-brand-tint3: #F7FFDD;
+  --color-brand-tint4: #FCFFF4;
+  --color-brand-dark: #0B0F19;
+  --color-brand-black: #000000;
+
+  --color-aicte-navy: #0B0F19;
   --color-aicte-blue: #0A4D8C;
   --color-aicte-saffron: #FF7A1A;
   --color-aicte-green: #046A38;
 
-  --color-slate-950: #0F172A;
-  --color-slate-900: #0F172A;
+  --color-slate-950: #0B0F19;
+  --color-slate-900: #0B0F19;
   --color-slate-800: #1E293B;
   --color-slate-700: #334155;
   --color-slate-600: #475569;
@@ -37,10 +55,10 @@
   --color-slate-300: #CBD5E1;
   --color-slate-200: #E2E8F0;
   --color-slate-100: #F1F5F9;
-  --color-slate-50: #F8FAFC;
+  --color-slate-50: #FCFFF4;
 
-  --color-zinc-950: #0F172A;
-  --color-zinc-900: #0F172A;
+  --color-zinc-950: #0B0F19;
+  --color-zinc-900: #0B0F19;
   --color-zinc-800: #1E293B;
   --color-zinc-700: #334155;
   --color-zinc-600: #475569;
@@ -49,8 +67,8 @@
 }
 
 body {
-  background-color: #F8FAFC;
-  color: #0F172A;
+  background-color: #FCFFF4;
+  color: #0B0F19;
   font-family: var(--font-sans);
   letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
@@ -76,3 +94,98 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #94A3B8;
 }
+
+/* =========================================================================
+   Contour Wave & Wireframe Celestial Mesh Animations (Deconflicted Style)
+   ========================================================================= */
+
+@keyframes waveDriftSlow {
+  0%, 100% {
+    transform: translateY(0px) scaleY(1);
+  }
+  50% {
+    transform: translateY(-14px) scaleY(1.05);
+  }
+}
+
+@keyframes waveDriftAlt {
+  0%, 100% {
+    transform: translateY(0px) scaleY(1);
+  }
+  50% {
+    transform: translateY(16px) scaleY(0.95);
+  }
+}
+
+@keyframes waveDriftMid {
+  0%, 100% {
+    transform: translateY(0px) scaleX(1);
+  }
+  50% {
+    transform: translateY(-9px) scaleX(1.015);
+  }
+}
+
+@keyframes signalFlow {
+  0% {
+    stroke-dashoffset: 360;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes beaconPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.95;
+  }
+  70% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes celestialRotateSlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-wave-slow {
+  animation: waveDriftSlow 14s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}
+
+.animate-wave-alt {
+  animation: waveDriftAlt 18s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}
+
+.animate-wave-mid {
+  animation: waveDriftMid 11s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}
+
+.animate-signal-flow {
+  stroke-dasharray: 10 18;
+  animation: signalFlow 8s linear infinite;
+}
+
+.animate-signal-flow-fast {
+  stroke-dasharray: 6 14;
+  animation: signalFlow 4s linear infinite;
+}
+
+.animate-beacon-ping {
+  animation: beaconPulse 2.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+  transform-origin: center;
+}
+

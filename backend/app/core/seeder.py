@@ -8,6 +8,7 @@ demonstration cases (Cases A, B, C, D, E) for live evaluation.
 
 import hashlib
 import random
+import secrets
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, List, Tuple
 from faker import Faker
@@ -31,7 +32,66 @@ from app.models import (
     SeatCategory,
     StudentEnrolment,
     ValidationStatus,
+    User,
 )
+
+def hash_password(password: str) -> str:
+    salt = secrets.token_hex(16)
+    key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100_000)
+    return f"{salt}:{key.hex()}"
+
+def verify_password(password: str, hashed_password: str) -> bool:
+    try:
+        if not hashed_password or ":" not in hashed_password:
+            return False
+        salt, key_hex = hashed_password.split(":", 1)
+        test_key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100_000)
+        return secrets.compare_digest(test_key.hex(), key_hex)
+    except Exception:
+        return False
+
+DEMO_USERS = [
+    {
+        "email": "admin@aicte-india.org",
+        "password": "password123",
+        "role": "NATIONAL_ADMIN",
+        "name": "Dr. R. K. Verma",
+        "title": "AICTE National Vigilance Director",
+        "organization": "All India Council for Technical Education (HQ, New Delhi)",
+        "identifier": "EMP-AICTE-0081",
+        "allowed_dashboard_path": "/dashboard/admin",
+    },
+    {
+        "email": "registrar@apex-inst.ac.in",
+        "password": "password123",
+        "role": "INSTITUTION_REGISTRAR",
+        "name": "Prof. S. Kulkarni",
+        "title": "Nodal Registrar, Apex Institute (AICTE: 1-10000001)",
+        "organization": "Apex Institute of Technology, Bangalore Urban",
+        "identifier": "INST-REG-10000001",
+        "allowed_dashboard_path": "/institution-portal",
+    },
+    {
+        "email": "aarav.sharma@student.apaar.in",
+        "password": "password123",
+        "role": "STUDENT_DATA_PRINCIPAL",
+        "name": "Aarav Sharma",
+        "title": "Student Data Principal (APAAR: 482910384715)",
+        "organization": "Apex Institute of Technology — B.Tech Computer Science",
+        "identifier": "APAAR-482910384715",
+        "allowed_dashboard_path": "/consent-wallet",
+    },
+    {
+        "email": "coe@tech-univ.ac.in",
+        "password": "password123",
+        "role": "UNIVERSITY_CONTROLLER",
+        "name": "Dr. M. Nair",
+        "title": "Controller of Examinations, Degree Issuing Authority",
+        "organization": "Apex Technical University Examination Division",
+        "identifier": "UNIV-COE-9042",
+        "allowed_dashboard_path": "/degree-studio",
+    },
+]
 
 fake = Faker("en_IN")
 Faker.seed(26263)
@@ -91,6 +151,7 @@ async def reset_database(session: AsyncSession) -> None:
     await session.execute(delete(StudentEnrolment))
     await session.execute(delete(ProgramQuota))
     await session.execute(delete(Institution))
+    await session.execute(delete(User))
     await session.commit()
 
 
@@ -810,6 +871,21 @@ async def seed_apaarnet_database(session: AsyncSession) -> Dict[str, Any]:
         officer_decision_reason=None,
     )
     session.add_all([ticket_c, ticket_d])
+
+    # 4b. Seed 4 Strict Stakeholder User Accounts for Multi-Tenant Auth
+    for user_info in DEMO_USERS:
+        u = User(
+            email=user_info["email"],
+            hashed_password=hash_password(user_info["password"]),
+            role=user_info["role"],
+            name=user_info["name"],
+            title=user_info["title"],
+            organization=user_info["organization"],
+            identifier=user_info["identifier"],
+            allowed_dashboard_path=user_info["allowed_dashboard_path"],
+            is_active=True,
+        )
+        session.add(u)
     await session.commit()
 
     # 5. Append Cryptographic Audit Event for Seeding
@@ -822,6 +898,7 @@ async def seed_apaarnet_database(session: AsyncSession) -> Dict[str, Any]:
             "institutions_seeded": len(institutions),
             "quotas_seeded": len(quotas),
             "students_seeded": len(students),
+            "users_seeded": len(DEMO_USERS),
             "demonstration_cases": ["CASE_A_QUOTA_USP", "CASE_B_UGC_DUAL", "CASE_C_CROSS_STATE", "CASE_D_PHONETIC_EVASION", "CASE_E_GHOST_RING"],
             "timestamp": datetime.now(timezone.utc).isoformat(),
         },
@@ -833,6 +910,7 @@ async def seed_apaarnet_database(session: AsyncSession) -> Dict[str, Any]:
         "institutions_count": len(institutions),
         "quotas_count": len(quotas),
         "students_count": len(students),
+        "users_count": len(DEMO_USERS),
         "disputes_count": 2,
         "demonstration_cases": {
             "case_a_quota_usp": {
@@ -864,3 +942,8 @@ async def seed_apaarnet_database(session: AsyncSession) -> Dict[str, Any]:
             },
         },
     }
+
+
+# Backward-compatible alias as requested: seed_demo_data()
+seed_demo_data = seed_apaarnet_database
+

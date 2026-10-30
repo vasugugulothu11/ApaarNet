@@ -1,1040 +1,473 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import {
-  Globe,
-  Building2,
-  BrainCircuit,
   ShieldCheck,
-  TrendingUp,
-  AlertOctagon,
-  Users,
-  CheckCircle2,
-  ChevronRight,
-  Database,
   ArrowRight,
+  Sparkles,
   Layers,
-  Sliders,
+  Database,
   Scale,
-  RefreshCw,
-  FileSpreadsheet,
-  Download,
-  Code2,
+  GitCompare,
+  Network,
+  Award,
+  CheckCircle2,
   Lock,
-  XCircle,
-  AlertTriangle,
-  FileText,
-  Search,
-  ExternalLink,
-  ChevronDown,
+  Building2,
+  Users,
+  ChevronRight,
+  Scan,
+  FileCheck2,
+  Cpu,
+  BadgeCheck,
 } from "lucide-react";
-import {
-  api,
-  NationalOverviewResponse,
-  InstitutionPortalItem,
-  QuotaCompareResponse,
-  AuditLedgerResponse,
-  TamperSimulationResponse,
-} from "@/lib/api";
+import { Logo } from "@/components/Logo";
+import { CelestialMeshBackground } from "@/components/CelestialMeshBackground";
 
-export default function NationalCommandPage() {
-  // Telemetry State
-  const [telemetry, setTelemetry] = useState<NationalOverviewResponse | null>(null);
-  const [loadingTelemetry, setLoadingTelemetry] = useState(true);
+export default function PublicLandingPage() {
+  const STAGES = [
+    {
+      num: "01",
+      title: "Identity Ingestion & Verhoeff D₅ Checksum",
+      tag: "Dihedral D₅ Arithmetic",
+      accent: "#b5d5e1",
+      description:
+        "Validates 12-digit APAAR identifiers in real time using non-commutative dihedral group arithmetic, immediately catching 100% of single-digit errors and adjacent transpositions before ingestion.",
+      stat: "100% Checksum Efficacy",
+      icon: Scan,
+    },
+    {
+      num: "02",
+      title: "Dual-Stream Schema Normalization (APH 2024–27)",
+      tag: "Statutory Mandate",
+      accent: "#a88ed4",
+      description:
+        "Bridges the critical divide between aggregate headcount reporting for Engineering & Polytechnic institutes and micro-level student schemas for PGDM academies, aligning with AICTE 2024–27 guidelines.",
+      stat: "Dual-Stream Support",
+      icon: Layers,
+    },
+    {
+      num: "03",
+      title: "Multi-Category Statutory Quota Engine",
+      tag: "Over-Admission Guard",
+      accent: "#b9e303",
+      description:
+        "Automates strict statutory quota mathematics across Approved Intake plus supernumerary allotments: Tuition Fee Waiver (TFW 5%), EWS (10%), PMSSS J&K/Ladakh, NRI/PIO/FN (15%), and Supernumerary Girls Seats.",
+      stat: "Zero Headcount Breach",
+      icon: Scale,
+    },
+    {
+      num: "04",
+      title: "Cross-State Concurrent Enrolment Telemetry",
+      tag: "UGC 2022 Disambiguation",
+      accent: "#b5d5e1",
+      description:
+        "Telemetry engine distinguishing lawful simultaneous dual-degrees under UGC 2022 Guidelines (1 Physical Regular + 1 Online/ODL) from illegal cross-state physical seat hoarding across state boundaries.",
+      stat: "Real-Time Inter-State",
+      icon: GitCompare,
+    },
+    {
+      num: "05",
+      title: "Indic Phonetic Matching & Twin Protection",
+      tag: "Fellegi-Sunter Algorithm",
+      accent: "#a88ed4",
+      description:
+        "Leverages specialized Indic Metaphone phonetic tokens and Fellegi-Sunter probabilistic linkage to catch evasive abbreviations (e.g. Mohd. vs Mohammed) while protecting genuine twins with distinct APAARs.",
+      stat: "Zero Twin False-Positives",
+      icon: Users,
+    },
+    {
+      num: "06",
+      title: "Isolation Forest Anomaly & SHAP Explainability",
+      tag: "Explainable AI (XAI)",
+      accent: "#b9e303",
+      description:
+        "Unsupervised tree ensemble ranks all 50 colleges by anomaly probability, isolating ghost admission rings and clustered burst admissions with mathematical SHAP feature attribution waterfalls.",
+      stat: "Mathematical Attribution",
+      icon: Network,
+    },
+    {
+      num: "07",
+      title: "Ed25519 Merkle Ledger & W3C Degree Studio",
+      tag: "Cryptographic Tamper-Seal",
+      accent: "#b5d5e1",
+      description:
+        "Guarantees forward secrecy through append-only SHA-256 Merkle audit chains. University controllers issue tamper-proof W3C Verifiable Credentials with 2048-bit Bitstring status revocation lists.",
+      stat: "Stateless Offline Proof",
+      icon: Award,
+    },
+  ];
 
-  // Case A Quota Compare State
-  const [institutions, setInstitutions] = useState<InstitutionPortalItem[]>([]);
-  const [selectedQuotaId, setSelectedQuotaId] = useState<string>("");
-  const [quotaCompare, setQuotaCompare] = useState<QuotaCompareResponse | null>(null);
-  const [loadingCompare, setLoadingCompare] = useState(false);
-
-  // Merkle Audit Ledger & Tamper State
-  const [ledger, setLedger] = useState<AuditLedgerResponse | null>(null);
-  const [loadingLedger, setLoadingLedger] = useState(true);
-  const [tamperResult, setTamperResult] = useState<TamperSimulationResponse | null>(null);
-  const [isSimulatingTamper, setIsSimulatingTamper] = useState(false);
-
-  // Report Modal State
-  const [activeReportModal, setActiveReportModal] = useState<string | null>(null);
-  const [reportJsonData, setReportJsonData] = useState<any | null>(null);
-  const [loadingReportData, setLoadingReportData] = useState(false);
-
-  // State Filter in Matrix
-  const [stateSearch, setStateSearch] = useState("");
-
-  // Initial Data Load
-  useEffect(() => {
-    loadAllData();
-  }, []);
-
-  const loadAllData = async () => {
-    setLoadingTelemetry(true);
-    setLoadingLedger(true);
-
-    try {
-      const [overviewData, instData, ledgerData] = await Promise.all([
-        api.getNationalOverview(),
-        api.getInstitutions(),
-        api.getAuditLedger(20),
-      ]);
-
-      setTelemetry(overviewData);
-      setInstitutions(instData);
-      setLedger(ledgerData);
-
-      // Auto-select Apex Institute of Technology
-      if (instData.length > 0) {
-        const apex = instData.find(
-          (i) => i.aicte_permanent_id === "1-10000001" || i.name.includes("Apex")
-        );
-        const targetInst = apex || instData[0];
-        if (targetInst.program_quotas && targetInst.program_quotas.length > 0) {
-          const quota =
-            targetInst.program_quotas.find((q) => q.course_code.includes("CSE")) ||
-            targetInst.program_quotas[0];
-          setSelectedQuotaId(quota.id);
-          loadQuotaCompare(quota.id);
-        }
-      }
-    } catch (err) {
-      console.error("Failed to load initial command data:", err);
-    } finally {
-      setLoadingTelemetry(false);
-      setLoadingLedger(false);
-    }
-  };
-
-  const loadQuotaCompare = async (quotaId: string) => {
-    if (!quotaId) return;
-    setLoadingCompare(true);
-    try {
-      const data = await api.getQuotaCompare(quotaId);
-      setQuotaCompare(data);
-    } catch (err) {
-      console.error("Failed to load quota compare:", err);
-    } finally {
-      setLoadingCompare(false);
-    }
-  };
-
-  const handleQuotaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const qId = e.target.value;
-    setSelectedQuotaId(qId);
-    loadQuotaCompare(qId);
-  };
-
-  const handleSimulateTamper = async () => {
-    setIsSimulatingTamper(true);
-    try {
-      const res = await api.simulateTamper();
-      setTamperResult(res);
-    } catch (err: any) {
-      alert(`Tamper simulation failed: ${err.message}`);
-    } finally {
-      setIsSimulatingTamper(false);
-    }
-  };
-
-  const handleInspectReport = async (reportType: string) => {
-    setActiveReportModal(reportType);
-    setLoadingReportData(true);
-    setReportJsonData(null);
-    try {
-      const data = await api.getExportData(reportType);
-      setReportJsonData(data);
-    } catch (err: any) {
-      setReportJsonData({ error: err.message });
-    } finally {
-      setLoadingReportData(false);
-    }
-  };
-
-  // Filtered State Matrix
-  const filteredStates = (telemetry?.state_breakdown || []).filter((s) =>
-    s.state.toLowerCase().includes(stateSearch.toLowerCase())
-  );
+  const ROLES = [
+    {
+      role: "National Administrator",
+      title: "AICTE Vigilance Directorate",
+      email: "admin@aicte-india.org",
+      target: "/dashboard/admin",
+      badge: "National Oversight",
+      accent: "#b9e303",
+      desc: "Comprehensive inter-state seat quotas, anomaly graph visualizer, and Merkle ledger cryptographic audit tools.",
+    },
+    {
+      role: "Institution Registrar",
+      title: "Apex Institute of Technology",
+      email: "registrar@apex-inst.ac.in",
+      target: "/institution-portal",
+      badge: "Ingestion Sandbox",
+      accent: "#b5d5e1",
+      desc: "Batch student enrolment ingestion, statutory pre-commit quota simulation, and automated validation receipts.",
+    },
+    {
+      role: "Student Data Principal",
+      title: "Aarav Sharma (B.Tech CSE)",
+      email: "aarav.sharma@student.apaar.in",
+      target: "/consent-wallet",
+      badge: "DPDP Sovereign",
+      accent: "#a88ed4",
+      desc: "Sovereign DPDP consent management, zero-exposure predicate verification, and selective attribute disclosure.",
+    },
+    {
+      role: "University Controller",
+      title: "Controller of Examinations",
+      email: "coe@tech-univ.ac.in",
+      target: "/degree-studio",
+      badge: "W3C Credential Studio",
+      accent: "#b9e303",
+      desc: "Ed25519 tamper-proof digital degree issuance, Bitstring status revocation registry, and offline QR verifier.",
+    },
+  ];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 space-y-12">
-      {/* 1. Header & KPI Strip */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 sm:p-8 space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1.5 max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-[#003366] shadow-2xs">
-              <span className="h-2 w-2 rounded-full bg-[#FF7A1A]" />
-              <span>National Statutory Telemetry · 50 Monitored Institutions</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#003366] pt-1">
-              National Command Center
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
-              Continuous telemetry across 50 institutions in 10 states. Enforces statutory quota carve-outs,
-              detects cross-institution concurrent enrolments, and maintains an immutable SHA-256 Merkle audit ledger.
-            </p>
-          </div>
+    <div className="min-h-screen bg-[#f8fafc] text-[#232323]">
+      {/* 1. Global Public Top Navigation Bar */}
+      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
+          {/* New Modern Vector Logo */}
+          <Logo size="md" href="/" />
 
-          <div className="flex items-center gap-2 self-start sm:self-center">
-            <button
-              onClick={loadAllData}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-[#003366] transition-colors hover:border-[#003366] hover:text-[#003366]"
-              title="Refresh live metrics"
+          {/* Interactive Navigation Pills (Visible Button Style) */}
+          <div className="hidden lg:flex items-center gap-2">
+            <a
+              href="#overview"
+              className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-[#232323] hover:text-white text-xs font-bold text-slate-700 shadow-2xs transition-all"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${loadingTelemetry ? "animate-spin text-[#003366]" : "text-slate-600"}`} />
-              <span>Refresh Metrics</span>
-            </button>
+              Regulatory Overview
+            </a>
+            <a
+              href="#seven-stages"
+              className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-[#232323] hover:text-white text-xs font-bold text-slate-700 shadow-2xs transition-all"
+            >
+              7-Stage Flow
+            </a>
+            <a
+              href="#personas"
+              className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-[#232323] hover:text-white text-xs font-bold text-slate-700 shadow-2xs transition-all"
+            >
+              Stakeholder Portals
+            </a>
+            <a
+              href="#architecture"
+              className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-[#232323] hover:text-white text-xs font-bold text-slate-700 shadow-2xs transition-all"
+            >
+              APH 2024–27 Alignment
+            </a>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/dashboard"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-[#b5d5e1] px-4 py-2 text-xs font-bold text-[#232323] shadow-xs hover:bg-[#9fcddc] transition-all hover:scale-105"
+            >
+              <span>Portals</span>
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#232323] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-black transition-all hover:scale-105"
+            >
+              <span>Get Started</span>
+              <ArrowRight className="h-3.5 w-3.5 text-[#b9e303]" />
+            </Link>
           </div>
         </div>
+      </header>
 
-        {/* Section Quick Jump Anchors */}
-        <div className="flex flex-wrap items-center gap-2 border-t border-slate-200 pt-4 text-xs">
-          <a
-            href="#telemetry"
-            className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-[#003366] hover:border-[#003366] transition-colors"
-          >
-            Telemetry & Quotas
-          </a>
-          <a
-            href="#quota-evaluation"
-            className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-[#003366] hover:border-[#003366] transition-colors"
-          >
-            Statutory Quota Evaluation
-          </a>
-          <a
-            href="#merkle-lab"
-            className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-[#003366] hover:border-[#003366] transition-colors"
-          >
-            Audit Ledger & Tamper Lab
-          </a>
-          <a
-            href="#accreditation-exports"
-            className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-[#003366] hover:border-[#003366] transition-colors"
-          >
-            Accreditation Packages
-          </a>
-        </div>
-      </div>
+      {/* 2. Hero Section with Celestial Mesh Globe & Flowing Contour Waves */}
+      <section id="overview" className="relative isolate overflow-hidden pt-12 pb-24 min-h-[760px] flex flex-col justify-center">
+        {/* Animated Dark Globe on Left & Canvas-wide Topographic Contour Waves */}
+        <CelestialMeshBackground variant="landing" spherePosition="left" />
 
-      {/* KPI Cards Grid */}
-      <div id="telemetry" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-700">
-            <span className="text-[11px] font-bold uppercase tracking-wide">Institutions</span>
-            <Building2 className="h-4 w-4 text-[#003366]" />
-          </div>
-          <div className="mt-2 text-2xl font-black text-[#003366]">
-            {loadingTelemetry ? "..." : telemetry?.total_institutions ?? "50"}
-          </div>
-          <p className="mt-1 text-[11px] text-slate-600 font-medium">10 States Monitored</p>
-        </div>
+        <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-12 w-full space-y-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left Column: Dedicated showcase flank for the Celestial Sphere on desktop */}
+            <div className="hidden lg:block lg:col-span-5 min-h-[440px]" />
 
-        <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-700">
-            <span className="text-[11px] font-bold uppercase tracking-wide">Total Enrolled</span>
-            <Users className="h-4 w-4 text-[#003366]" />
-          </div>
-          <div className="mt-2 text-2xl font-black text-[#003366]">
-            {loadingTelemetry
-              ? "..."
-              : telemetry?.total_students_enrolled.toLocaleString() ?? "1,432"}
-          </div>
-          <p className="mt-1 text-[11px] text-slate-600 font-medium">Validated Enrolments</p>
-        </div>
+            {/* Right Column: Hero Content matching reference style */}
+            <div className="lg:col-span-7 lg:pl-6 xl:pl-10 space-y-6 text-left">
+              <div className="inline-flex items-center gap-2.5 rounded-full border border-slate-200/90 bg-white/90 backdrop-blur-md px-4 py-1.5 text-xs font-bold shadow-xs">
+                <span className="flex h-2 w-2 rounded-full bg-[#b9e303] animate-pulse" />
+                <span className="text-slate-800">
+                  AICTE Statutory Mandate APH 2024–27 Clause 4.2 • National Regulatory Mesh
+                </span>
+              </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-700">
-            <span className="text-[11px] font-bold uppercase tracking-wide">APAAR Coverage</span>
-            <ShieldCheck className="h-4 w-4 text-[#046A38]" />
-          </div>
-          <div className="mt-2 text-2xl font-black text-[#046A38]">
-            {loadingTelemetry ? "..." : `${telemetry?.verified_apaar_coverage_pct ?? 92.4}%`}
-          </div>
-          <p className="mt-1 text-[11px] text-slate-600 font-medium">Verhoeff D₅ Validated</p>
-        </div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#232323] leading-[1.08]">
+                The Single Source of Truth for <br />
+                <span className="bg-gradient-to-r from-[#232323] via-[#a88ed4] to-[#232323] bg-clip-text text-transparent">
+                  National Student Data & Quotas
+                </span>
+              </h1>
 
-        <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-700">
-            <span className="text-[11px] font-bold uppercase tracking-wide">Approved Intake</span>
-            <TrendingUp className="h-4 w-4 text-[#003366]" />
-          </div>
-          <div className="mt-2 text-2xl font-black text-[#003366]">
-            {loadingTelemetry
-              ? "..."
-              : telemetry?.total_approved_intake.toLocaleString() ?? "3,180"}
-          </div>
-          <p className="mt-1 text-[11px] text-slate-600 font-medium">Sanctioned Base Capacity</p>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-700">
-            <span className="text-[11px] font-bold uppercase tracking-wide">Active Flags</span>
-            <AlertOctagon className="h-4 w-4 text-rose-600" />
-          </div>
-          <div className="mt-2 text-2xl font-black text-rose-700">
-            {loadingTelemetry ? "..." : telemetry?.active_flagged_violations ?? "6"}
-          </div>
-          <p className="mt-1 text-[11px] text-slate-600 font-medium">Intake Excess Detected</p>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-4">
-          <div className="flex items-center justify-between text-slate-700">
-            <span className="text-[11px] font-bold uppercase tracking-wide">Disputes</span>
-            <Scale className="h-4 w-4 text-amber-600" />
-          </div>
-          <div className="mt-2 text-2xl font-black text-amber-700">
-            {loadingTelemetry ? "..." : telemetry?.open_tri_party_disputes ?? "2"}
-          </div>
-          <p className="mt-1 text-[11px] text-slate-600 font-medium">Inter-State Collisions</p>
-        </div>
-      </div>
-
-      {/* Multi-Quota Distribution & Status Breakdown */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Left 2 Cols: Statutory Multi-Quota Distribution */}
-        <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 space-y-5 lg:col-span-2">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-            <div>
-              <h2 className="text-sm font-semibold text-[#003366] flex items-center gap-2">
-                <Sliders className="h-4 w-4 text-slate-600" />
-                Statutory Multi-Quota Seat Distribution
-              </h2>
-              <p className="text-xs text-slate-600">
-                Nationwide breakdown across base sanctioned and statutory supernumerary categories.
+              <p className="max-w-2xl text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                A unified verification mesh engineered to eliminate fraudulent concurrent admissions, enforce statutory
+                supernumerary quotas (TFW, EWS, PMSSS, Girls), and issue tamper-evident W3C academic credentials backed
+                by an Ed25519-signed Merkle audit ledger.
               </p>
-            </div>
-            <span className="rounded-md bg-slate-50 px-2.5 py-1 text-[11px] font-mono text-[#003366] border border-slate-200">
-              Total: {telemetry?.total_students_enrolled.toLocaleString() ?? 1432}
-            </span>
-          </div>
 
-          {telemetry?.seat_distribution ? (
-            <div className="space-y-4">
-              {/* General Base */}
-              <div>
-                <div className="flex justify-between text-xs text-[#003366] mb-1">
-                  <span>General Base (Sanctioned Intake)</span>
-                  <span className="font-mono text-slate-600">
-                    {telemetry.seat_distribution.general_base} seats (
-                    {Math.round(
-                      (telemetry.seat_distribution.general_base /
-                        telemetry.total_students_enrolled) *
-                        100
-                    )}
-                    %)
-                  </span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-slate-50 overflow-hidden border border-slate-200">
-                  <div
-                    className="h-full bg-[#003366] rounded-full"
-                    style={{
-                      width: `${(telemetry.seat_distribution.general_base /
-                        telemetry.total_students_enrolled) *
-                        100}%`,
-                    }}
-                  />
-                </div>
-              </div>
+              {/* Hero Action Buttons: High-visibility contrasting pills */}
+              <div className="flex flex-wrap items-center gap-3.5 pt-2">
+                {/* Primary Get Started Button */}
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-2.5 rounded-2xl bg-[#232323] px-7 py-3.5 text-xs sm:text-sm font-black text-white shadow-xl hover:bg-black hover:scale-105 transition-all"
+                >
+                  <span>Get Started — Enter Portal</span>
+                  <ArrowRight className="h-4 w-4 text-[#b9e303]" />
+                </Link>
 
-              {/* FN / OCI / CIWGC Supernumerary */}
-              <div>
-                <div className="flex justify-between text-xs text-[#003366] mb-1">
-                  <span className="text-[#046A38] font-semibold">
-                    Foreign National / OCI / CIWGC (15% Supernumerary)
-                  </span>
-                  <span className="font-mono text-slate-600">
-                    {telemetry.seat_distribution.fn_oci_ciwgc_supernumerary} seats (
-                    {Math.round(
-                      (telemetry.seat_distribution.fn_oci_ciwgc_supernumerary /
-                        telemetry.total_students_enrolled) *
-                        100
-                    )}
-                    %)
-                  </span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-slate-50 overflow-hidden border border-slate-200">
-                  <div
-                    className="h-full bg-emerald-500 rounded-full"
-                    style={{
-                      width: `${(telemetry.seat_distribution.fn_oci_ciwgc_supernumerary /
-                        telemetry.total_students_enrolled) *
-                        100}%`,
-                    }}
-                  />
-                </div>
-                <p className="text-[11px] text-slate-600 mt-1">
-                  Statutory allowance over and above base sanctioned intake.
-                </p>
-              </div>
+                {/* Secondary Button 1: Cyan visible pill */}
+                <a
+                  href="#seven-stages"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-[#b5d5e1] border-2 border-[#8dbecf] px-6 py-3.5 text-xs sm:text-sm font-bold text-[#232323] shadow-md hover:bg-[#a2d1e2] hover:scale-105 transition-all"
+                >
+                  <span>Explore 7-Stage Flow</span>
+                  <ChevronRight className="h-4 w-4 text-[#232323]" />
+                </a>
 
-              {/* NRI Internal Carve-Out */}
-              <div>
-                <div className="flex justify-between text-xs text-[#003366] mb-1">
-                  <span>NRI Internal Carve-Out (5%)</span>
-                  <span className="font-mono text-slate-600">
-                    {telemetry.seat_distribution.nri_internal} seats (
-                    {Math.round(
-                      (telemetry.seat_distribution.nri_internal /
-                        telemetry.total_students_enrolled) *
-                        100
-                    )}
-                    %)
-                  </span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-slate-50 overflow-hidden border border-slate-200">
-                  <div
-                    className="h-full bg-blue-600 rounded-full"
-                    style={{
-                      width: `${(telemetry.seat_distribution.nri_internal /
-                        telemetry.total_students_enrolled) *
-                        100}%`,
-                    }}
-                  />
-                </div>
-                <p className="text-[11px] text-slate-600 mt-1">
-                  Carved out within approved base intake without expanding base capacity.
-                </p>
-              </div>
-
-              {/* TFW Supernumerary */}
-              <div>
-                <div className="flex justify-between text-xs text-[#003366] mb-1">
-                  <span className="text-amber-800 font-bold">Tuition Fee Waiver (5% TFW)</span>
-                  <span className="font-mono text-slate-700 font-semibold">
-                    {telemetry.seat_distribution.tfw_supernumerary} seats
-                  </span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-slate-50 overflow-hidden border border-slate-200">
-                  <div
-                    className="h-full bg-amber-500 rounded-full"
-                    style={{
-                      width: `${(telemetry.seat_distribution.tfw_supernumerary /
-                        telemetry.total_students_enrolled) *
-                        100}%`,
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* PMSSS & Lateral Entry */}
-              <div className="grid grid-cols-2 gap-4 pt-1">
-                <div>
-                  <div className="flex justify-between text-xs text-[#003366] mb-1">
-                    <span>PMSSS Supernumerary</span>
-                    <span className="font-mono text-slate-600">
-                      {telemetry.seat_distribution.pmsss_supernumerary}
-                    </span>
-                  </div>
-                  <div className="h-1.5 w-full rounded-full bg-slate-50 overflow-hidden border border-slate-200">
-                    <div
-                      className="h-full bg-slate-400 rounded-full"
-                      style={{
-                        width: `${(telemetry.seat_distribution.pmsss_supernumerary /
-                          telemetry.total_students_enrolled) *
-                          100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-xs text-[#003366] mb-1">
-                    <span>Lateral Entry</span>
-                    <span className="font-mono text-slate-600">
-                      {telemetry.seat_distribution.lateral_entry}
-                    </span>
-                  </div>
-                  <div className="h-1.5 w-full rounded-full bg-slate-50 overflow-hidden border border-slate-200">
-                    <div
-                      className="h-full bg-[#003366] rounded-full"
-                      style={{
-                        width: `${(telemetry.seat_distribution.lateral_entry /
-                          telemetry.total_students_enrolled) *
-                          100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="py-8 text-center text-xs text-slate-600">Loading distribution...</div>
-          )}
-        </div>
-
-        {/* Right 1 Col: Engine Verification Status */}
-        <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 space-y-4">
-          <h2 className="text-sm font-semibold text-[#003366] flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-[#046A38]" />
-            Active Verification Engines
-          </h2>
-          <div className="space-y-3 text-xs">
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-1">
-              <div className="font-medium text-[#003366]">Verhoeff Dihedral D₅ Validator</div>
-              <div className="text-slate-600 text-[11px]">
-                Validates 12-digit APAAR identifiers; catches 100% of single-digit errors and adjacent transpositions.
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-1">
-              <div className="font-medium text-[#003366]">DigiLocker / ABC Adapter</div>
-              <div className="text-slate-600 text-[11px]">
-                Non-blocking failover queue prevents registration lockouts during external service latency.
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-1">
-              <div className="font-medium text-[#003366]">Enrolment Syndicate Detection</div>
-              <div className="text-slate-600 text-[11px]">
-                Bipartite graph analysis flags multi-institution shared identity patterns.
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-1">
-              <div className="font-medium text-[#003366]">Dual-Degree Disambiguation</div>
-              <div className="text-slate-600 text-[11px]">
-                Allows simultaneous physical and online/ODL enrolments under UGC 2022 guidelines.
+                {/* Secondary Button 2: Lavender visible pill */}
+                <a
+                  href="#personas"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-[#a88ed4]/25 border-2 border-[#a88ed4] px-6 py-3.5 text-xs sm:text-sm font-bold text-[#232323] shadow-md hover:bg-[#a88ed4]/40 hover:scale-105 transition-all"
+                >
+                  <span>4 Role Dashboards</span>
+                  <ArrowRight className="h-4 w-4 text-[#232323]" />
+                </a>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* State-Wise Enrolment Matrix Table */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
-          <div>
-            <h2 className="text-sm font-semibold text-[#003366] flex items-center gap-2">
-              <Globe className="h-4 w-4 text-slate-600" />
-              State-Wise Enrolment & Capacity Matrix
+          {/* Statutory Credibility Highlights */}
+          <div className="grid grid-cols-2 gap-4 pt-4 sm:grid-cols-4 max-w-5xl text-left">
+            <div className="rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md p-5 shadow-xs">
+              <div className="text-[11px] font-bold uppercase text-slate-400">Deterministic Intake</div>
+              <div className="text-2xl font-black text-[#232323] mt-1">50 Colleges</div>
+              <div className="text-[11px] text-slate-500 font-medium">10 Indian States Modelled</div>
+            </div>
+            <div className="rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md p-5 shadow-xs">
+              <div className="text-[11px] font-bold uppercase text-slate-400">Integrity Check</div>
+              <div className="text-2xl font-black text-[#232323] mt-1">Verhoeff D₅</div>
+              <div className="text-[11px] text-slate-500 font-medium">Dihedral Arithmetic Checksum</div>
+            </div>
+            <div className="rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md p-5 shadow-xs">
+              <div className="text-[11px] font-bold uppercase text-slate-400">Ledger Seal</div>
+              <div className="text-2xl font-black text-[#232323] mt-1">SHA-256</div>
+              <div className="text-[11px] text-slate-500 font-medium">Merkle Append-Only Log</div>
+            </div>
+            <div className="rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md p-5 shadow-xs">
+              <div className="text-[11px] font-bold uppercase text-slate-400">Privacy Mandate</div>
+              <div className="text-2xl font-black text-[#232323] mt-1">DPDP 2023</div>
+              <div className="text-[11px] text-slate-500 font-medium">Zero-Exposure Predicate Proofs</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. The 7-Stage Data Verification & Quota Flow */}
+      <section id="seven-stages" className="border-t border-slate-200/80 bg-white py-20">
+        <div className="mx-auto max-w-7xl px-6 space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1 text-xs font-bold text-slate-800">
+              <Sparkles className="h-3.5 w-3.5 text-[#b9e303]" />
+              <span>END-TO-END STATUTORY PIPELINE</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-[#232323]">
+              The 7-Stage Statutory Verification & Quota Flow
             </h2>
-            <p className="text-xs text-slate-600">
-              Sanctioned intake versus verified enrolments across 10 state jurisdictions.
+            <p className="text-sm text-slate-600 font-normal">
+              From messy institutional ERP spreadsheets to Ed25519 cryptographic credential issuance,
+              ApaarNet automates statutory verification without human intervention.
             </p>
           </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[#0A4D8C]" />
-            <input
-              type="text"
-              placeholder="Filter states..."
-              value={stateSearch}
-              onChange={(e) => setStateSearch(e.target.value)}
-              className="rounded-md border border-slate-200 bg-slate-50 pl-8 pr-3 py-1.5 text-xs text-[#003366] placeholder-slate-400 focus:border-[#003366] focus:outline-none"
-            />
-          </div>
-        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-slate-200 text-slate-600">
-                <th className="py-2.5 px-3 font-medium">State</th>
-                <th className="py-2.5 px-3 font-medium">Institutions</th>
-                <th className="py-2.5 px-3 font-medium">Approved Intake</th>
-                <th className="py-2.5 px-3 font-medium">Total Enrolled</th>
-                <th className="py-2.5 px-3 font-medium">Saturation</th>
-                <th className="py-2.5 px-3 font-medium">Compliance</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 font-mono">
-              {filteredStates.map((st) => {
-                const isOver = st.total_enrolled > st.approved_intake;
-                return (
-                  <tr key={st.state} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-2.5 px-3 font-sans font-medium text-[#003366]">{st.state}</td>
-                    <td className="py-2.5 px-3 text-slate-600">{st.institutions_count}</td>
-                    <td className="py-2.5 px-3 text-slate-600">
-                      {st.approved_intake.toLocaleString()}
-                    </td>
-                    <td className="py-2.5 px-3 text-[#003366] font-semibold">
-                      {st.total_enrolled.toLocaleString()}
-                    </td>
-                    <td className="py-2.5 px-3">
-                      <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-slate-50 border border-slate-200 text-[#003366]">
-                        {st.compliance_rate_pct}%
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {STAGES.map((stage) => {
+              const Icon = stage.icon;
+              return (
+                <div
+                  key={stage.num}
+                  className="group relative flex flex-col justify-between rounded-3xl border border-slate-200 bg-[#f8fafc] p-7 shadow-xs hover:border-[#232323] hover:shadow-md transition-all"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-mono font-black text-slate-400 group-hover:text-[#232323] transition-colors">
+                        STAGE {stage.num}
                       </span>
-                    </td>
-                    <td className="py-2.5 px-3 font-sans">
-                      {isOver ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-amber-800 font-semibold">
-                          <AlertTriangle className="h-3 w-3 text-amber-700" />
-                          Supernumerary Active
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-[#046A38] font-semibold">
-                          <CheckCircle2 className="h-3 w-3 text-[#046A38]" />
-                          Within Approved Cap
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* 2. Statutory Quota Evaluation (Naive Flat Counter vs ApaarNet Ledger) */}
-      <div
-        id="quota-evaluation"
-        className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 sm:p-8 space-y-6"
-      >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
-          <div className="space-y-1">
-            <h2 className="text-xl font-semibold text-[#003366]">
-              Statutory Quota Evaluation: Flat Counter vs. Multi-Quota Ledger
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 max-w-2xl">
-              Demonstrates why standard flat intake counters generate false positives by penalizing
-              statutory supernumerary admissions (OCI, CIWGC, TFW) under regulatory handbook rules.
-            </p>
-          </div>
-
-          {/* Institution / Program Selector */}
-          <div className="min-w-[280px]">
-            <label className="text-[11px] font-medium uppercase tracking-wider text-slate-600 block mb-1">
-              Select Institution & Program
-            </label>
-            <div className="relative">
-              <select
-                value={selectedQuotaId}
-                onChange={handleQuotaChange}
-                className="w-full appearance-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-[#003366] shadow-inner focus:border-[#003366] focus:outline-none"
-              >
-                {institutions.map((inst) =>
-                  (inst.program_quotas || []).map((q) => (
-                    <option key={q.id} value={q.id}>
-                      {inst.name.substring(0, 32)} — {q.program_name} ({q.course_code})
-                    </option>
-                  ))
-                )}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-3 top-2.5 h-4 w-4 text-slate-600" />
-            </div>
-          </div>
-        </div>
-
-        {loadingCompare ? (
-          <div className="py-12 text-center text-xs text-slate-600 animate-pulse">
-            Analyzing quota ledger and computing supernumerary carve-outs...
-          </div>
-        ) : quotaCompare ? (() => {
-          const actualEnrolment = quotaCompare.actual_enrolment ?? quotaCompare.metrics?.total_enrolled ?? 0;
-          const sanctionedIntake = quotaCompare.sanctioned_intake ?? quotaCompare.metrics?.sanctioned_approved_intake ?? 0;
-          const naiveCeiling = quotaCompare.naive_evaluation?.naive_ceiling ?? sanctionedIntake;
-          const naiveExcess = quotaCompare.naive_evaluation?.naive_excess ?? quotaCompare.naive_flat_system?.apparent_excess_flagged ?? 0;
-
-          const baseEnrolled = quotaCompare.apaarnet_evaluation?.base_enrolled ?? sanctionedIntake;
-          const supernumeraryCarvedOut = quotaCompare.apaarnet_evaluation?.supernumerary_carved_out ?? quotaCompare.metrics?.lawful_supernumerary_allowance ?? 0;
-          const totalPermittedCeiling = quotaCompare.apaarnet_evaluation?.total_permitted_ceiling ?? quotaCompare.metrics?.total_lawful_capacity ?? (sanctionedIntake + supernumeraryCarvedOut);
-          const apaarnetExcess = quotaCompare.apaarnet_evaluation?.apaarnet_excess ?? quotaCompare.apaarnet_quota_ledger?.actual_excess_flagged ?? 0;
-          const auditSummary = quotaCompare.audit_delta_summary ?? "Deterministic multi-category ledger tracking base intake vs statutory supernumerary caps under regulatory guidelines.";
-
-          return (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {/* Left Panel: Legacy Naive Flat Counter */}
-                <div className="rounded-xl border border-rose-200 bg-rose-50/70 p-5 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="rounded bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-900 border border-rose-300">
-                      Standard Flat Counter
-                    </span>
-                    <XCircle className="h-4 w-4 text-rose-600" />
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="text-2xl font-bold text-rose-700 font-mono">
-                      {actualEnrolment} / {sanctionedIntake}
+                      <span
+                        className="rounded-full px-2.5 py-0.5 text-[10px] font-bold border border-slate-300"
+                        style={{ backgroundColor: stage.accent, color: "#232323" }}
+                      >
+                        {stage.tag}
+                      </span>
                     </div>
-                    <p className="text-xs text-slate-600">
-                      Evaluates total enrolment against flat base intake only.
+
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-slate-200 shadow-2xs text-[#232323]">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <h3 className="text-base font-bold text-[#232323] leading-snug">
+                        {stage.title}
+                      </h3>
+                    </div>
+
+                    <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                      {stage.description}
                     </p>
                   </div>
 
-                  <div className="rounded-lg border border-rose-900/30 bg-slate-50 p-3.5 space-y-2 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-slate-600">Sanctioned Base Intake:</span>
-                      <span className="font-mono text-[#003366]">{naiveCeiling} seats</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-700 font-medium">Actual Enrolment:</span>
-                      <span className="font-mono text-[#003366] font-bold">{actualEnrolment} students</span>
-                    </div>
-                    <div className="flex justify-between font-semibold border-t border-slate-200 pt-2 text-rose-700">
-                      <span>Apparent Over-Intake:</span>
-                      <span className="font-mono font-bold">+{naiveExcess} Flagged</span>
-                    </div>
-                  </div>
-
-                  <div className="text-[11px] text-rose-900 leading-relaxed rounded bg-rose-100/70 p-3 border border-rose-200">
-                    <span className="font-bold text-rose-950">False-Positive Defect:</span> Treats 24 lawful OCI and 12 lawful CIWGC supernumerary admissions as illegal over-intake, erroneously triggering penalty flags.
+                  <div className="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between text-xs font-bold text-[#232323]">
+                    <span className="text-slate-500 font-mono text-[11px]">{stage.stat}</span>
+                    <CheckCircle2 className="h-4 w-4 text-[#b9e303]" />
                   </div>
                 </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
-                {/* Right Panel: Statutory Quota Ledger */}
-                <div className="rounded-xl border border-emerald-300 bg-emerald-50/70 p-5 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-900 border border-emerald-300">
-                      ApaarNet Statutory Ledger
-                    </span>
-                    <CheckCircle2 className="h-4 w-4 text-[#046A38]" />
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="text-2xl font-bold text-[#046A38] font-mono">
-                      {baseEnrolled} Base + {supernumeraryCarvedOut} Supernumerary
-                    </div>
-                    <p className="text-xs text-slate-700 font-medium">
-                      Permitted Statutory Ceiling:{" "}
-                      <span className="font-bold text-slate-900 font-mono">{totalPermittedCeiling} seats</span>
-                    </p>
-                  </div>
-
-                  <div className="rounded-lg border border-emerald-200 bg-white p-3.5 space-y-2 text-xs shadow-2xs">
-                    <div className="flex justify-between">
-                      <span className="text-slate-700 font-medium">Approved Base Intake:</span>
-                      <span className="font-mono text-[#003366] font-bold">{sanctionedIntake} seats</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-700 font-medium">Lawful Supernumerary Protected:</span>
-                      <span className="font-mono text-[#046A38] font-bold">+{supernumeraryCarvedOut} seats</span>
-                    </div>
-                    <div className="flex justify-between font-semibold border-t border-slate-200 pt-2 text-emerald-950">
-                      <span>True Regulatory Excess:</span>
-                      <span className="font-mono text-amber-800 font-bold">{apaarnetExcess} Students</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded bg-emerald-100/80 p-3 border border-emerald-300 text-emerald-950 text-xs">
-                    <div className="font-bold">85.7% False-Positive Elimination</div>
-                    <div className="font-mono text-[11px] font-semibold">36 Lawful Seats Validated</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Statutory Audit Summary */}
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-700 font-medium leading-relaxed">
-                <span className="font-bold text-[#003366]">Statutory Audit Explanation:</span>{" "}
-                {auditSummary}
-              </div>
+      {/* 4. Multi-Tenant Stakeholder Personas Section */}
+      <section id="personas" className="border-t border-slate-200/80 bg-[#f8fafc] py-20">
+        <div className="mx-auto max-w-7xl px-6 space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1 text-xs font-bold text-slate-800">
+              <Users className="h-3.5 w-3.5 text-[#a88ed4]" />
+              <span>STRICT MULTI-TENANCY & RBAC</span>
             </div>
-          );
-        })() : null}
-      </div>
-
-      {/* 3. Cryptographic Audit Ledger & Tamper Simulation */}
-      <div id="merkle-lab" className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 sm:p-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
-          <div className="space-y-1">
-            <h2 className="text-xl font-semibold text-[#003366]">
-              SHA-256 Merkle Audit Ledger & Tamper Simulation
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-[#232323]">
+              Four Authoritative Stakeholder Personas
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600">
-              Immutable PostgreSQL transaction ledger with cryptographic chain hashing and Ed25519 digital signatures.
+            <p className="text-sm text-slate-600 font-normal">
+              Each stakeholder accesses a segregated portal route secured with scoped JWT tokens and immutable audit logs.
             </p>
           </div>
 
-          <button
-            onClick={handleSimulateTamper}
-            disabled={isSimulatingTamper}
-            className="inline-flex items-center gap-2 rounded-lg border border-rose-300 bg-rose-100 text-rose-800 px-3.5 py-2 text-xs font-semibold text-rose-800 transition-colors hover:bg-rose-900/50 hover:text-[#003366] disabled:opacity-50"
-          >
-            <AlertOctagon className="h-4 w-4 text-rose-400" />
-            <span>
-              {isSimulatingTamper ? "Simulating Attack..." : "Simulate Tamper Attack"}
-            </span>
-          </button>
-        </div>
-
-        {/* Live Chain Status Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-[#003366]">Ledger Integrity:</span>
-            <span
-              className={`inline-flex items-center gap-1 font-semibold ${
-                ledger?.chain_integrity_valid ? "text-[#046A38]" : "text-rose-700"
-              }`}
-            >
-              <ShieldCheck className="h-4 w-4" />
-              {ledger?.chain_integrity_valid
-                ? "Cryptographically Sound (No Broken Hashes)"
-                : "Chain Integrity Compromised"}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4 text-[11px] font-mono text-slate-600">
-            <div>
-              Total Blocks:{" "}
-              <span className="text-[#003366] font-semibold">{ledger?.total_entries ?? 0}</span>
-            </div>
-            <div>
-              Latest Digest:{" "}
-              <span className="text-[#003366]">
-                {ledger?.latest_record_hash ? `${ledger.latest_record_hash.substring(0, 16)}...` : "None"}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Live Tamper Forensics Alert */}
-        {tamperResult && (
-          <div className="rounded-xl border border-rose-300 bg-rose-100/70 text-rose-800 p-5 space-y-4 animate-in fade-in duration-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-rose-400 font-semibold text-xs sm:text-sm">
-                <AlertTriangle className="h-4 w-4" />
-                <span>Tamper Attack Detected & Cryptographically Isolated</span>
-              </div>
-              <button
-                onClick={() => setTamperResult(null)}
-                className="text-xs text-slate-600 hover:text-[#003366]"
-              >
-                ✕ Dismiss
-              </button>
-            </div>
-
-            <p className="text-xs text-rose-800 leading-relaxed">
-              {tamperResult.explanation}
-            </p>
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 text-xs font-mono">
-              <div className="rounded border border-rose-200 bg-slate-50 p-3 space-y-1">
-                <div className="text-[10px] text-slate-700 font-semibold uppercase font-sans">1. Local Digest</div>
-                <div className="text-rose-700 font-bold">Mismatch Detected ✗</div>
-                <div className="text-[10px] text-slate-600 truncate">
-                  Exp: {tamperResult.original_record_hash.substring(0, 16)}...
-                </div>
-                <div className="text-[10px] text-rose-800 font-semibold truncate">
-                  Got: {tamperResult.tampered_record_hash.substring(0, 16)}...
-                </div>
-              </div>
-
-              <div className="rounded border border-rose-200 bg-slate-50 p-3 space-y-1">
-                <div className="text-[10px] text-slate-700 font-semibold uppercase font-sans">2. Downstream Pointer</div>
-                <div className="text-rose-700 font-bold">Chain Broken at Sequence ✗</div>
-                <div className="text-[10px] text-slate-600">
-                  Block prev_hash link invalidated by modified record.
-                </div>
-              </div>
-
-              <div className="rounded border border-rose-200 bg-slate-50 p-3 space-y-1">
-                <div className="text-[10px] text-slate-700 font-semibold uppercase font-sans">3. Ed25519 Signature</div>
-                <div className="text-rose-700 font-bold">Signature Rejected ✗</div>
-                <div className="text-[10px] text-slate-600">
-                  Attacker lacks cryptographic private key to sign checkpoint.
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Visual Blocks Strip */}
-        <div className="space-y-2">
-          <div className="text-xs font-medium text-slate-600">
-            Recent Audit Blocks (PostgreSQL)
-          </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
-            {(ledger?.entries || []).slice(0, 8).map((entry) => (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {ROLES.map((r) => (
               <div
-                key={entry.sequence_number}
-                className="flex-shrink-0 w-64 rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-1.5 text-xs font-mono"
+                key={r.email}
+                className="flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-xs hover:border-[#232323] hover:shadow-md transition-all"
               >
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-semibold text-[#003366]">Seq #{entry.sequence_number}</span>
-                  <span className="rounded bg-white px-1.5 py-0.5 text-[9px] text-slate-600 border border-slate-200">
-                    {entry.actor_role}
-                  </span>
-                </div>
-                <div className="font-sans font-medium text-[#003366] truncate text-[11px]">
-                  {entry.action_type}
-                </div>
-                <div className="text-[10px] text-slate-600/70 truncate">
-                  Hash: {entry.record_hash.substring(0, 16)}...
-                </div>
-                {entry.checkpoint_signature ? (
-                  <div className="rounded bg-emerald-50 border border-emerald-300 px-2 py-0.5 text-[9px] text-[#046A38] font-bold flex items-center gap-1 font-sans">
-                    <CheckCircle2 className="h-3 w-3 text-[#046A38]" />
-                    Ed25519 Checkpoint
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="rounded-full px-2.5 py-0.5 text-[10px] font-bold border border-slate-300"
+                      style={{ backgroundColor: r.accent, color: "#232323" }}
+                    >
+                      {r.badge}
+                    </span>
                   </div>
-                ) : (
-                  <div className="text-[9px] text-slate-600 font-medium font-sans">Standard Transaction</div>
-                )}
+
+                  <div>
+                    <h3 className="text-base font-bold text-[#232323]">{r.role}</h3>
+                    <div className="text-xs font-medium text-slate-500 mt-0.5">{r.title}</div>
+                    <code className="text-[11px] font-mono text-[#232323] font-bold block mt-1">
+                      {r.email}
+                    </code>
+                  </div>
+
+                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                    {r.desc}
+                  </p>
+                </div>
+
+                <div className="pt-6">
+                  <Link
+                    href={`/login?role=${encodeURIComponent(r.role)}`}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#232323] py-2.5 text-xs font-bold text-white shadow-2xs hover:bg-black transition-all"
+                  >
+                    <span>Login as {r.role.split(" ")[0]}</span>
+                    <ArrowRight className="h-3.5 w-3.5 text-[#b9e303]" />
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* 4. Accreditation & Policy Export Suite */}
-      <div id="accreditation-exports" className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 sm:p-8 space-y-6">
-        <div>
-          <h2 className="text-xl font-bold text-[#003366]">
-            Accreditation & Policy Compliance Export Suite
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-700 font-medium mt-1">
-            Standardized compliance packages downloadable as certified CSV datasets or structured JSON payloads.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {/* Report 1: NAAC / NBA Accreditation */}
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-5 space-y-4 flex flex-col justify-between">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="rounded bg-white px-2 py-0.5 text-[10px] font-medium text-[#003366] border border-slate-200">
-                  Criterion 2
-                </span>
-                <FileSpreadsheet className="h-4 w-4 text-slate-600" />
+      {/* 5. Statutory APH 2024–27 Alignment Callout */}
+      <section id="architecture" className="border-t border-slate-200/80 bg-white py-16">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-[#b5d5e1]/20 p-8 sm:p-12 shadow-sm space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b9e303] text-[#232323] font-bold">
+                §
               </div>
-              <h3 className="font-semibold text-[#003366] text-sm">NAAC & NBA Accreditation Package</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Student enrolment profiles, demand ratios, supernumerary quotas, and sanction compliance
-                verification for institutional evaluation.
-              </p>
-            </div>
-
-            <div className="pt-3 border-t border-slate-200 flex items-center gap-2">
-              <a
-                href={api.getExportUrl("NAAC_NBA_ACCREDITATION", "csv")}
-                target="_blank"
-                rel="noreferrer"
-                download="naac_nba_accreditation.csv"
-                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-md bg-[#003366] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#002244] transition-colors"
-              >
-                <Download className="h-3.5 w-3.5" />
-                <span>CSV</span>
-              </a>
-              <button
-                onClick={() => handleInspectReport("NAAC_NBA_ACCREDITATION")}
-                className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white shadow-xs px-3 py-1.5 text-xs font-medium text-[#003366] hover:border-[#003366] transition-colors"
-              >
-                <Code2 className="h-3.5 w-3.5" />
-                <span>JSON</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Report 2: State Policy Matrix */}
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-5 space-y-4 flex flex-col justify-between">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="rounded bg-white px-2 py-0.5 text-[10px] font-medium text-[#003366] border border-slate-200">
-                  State Councils
-                </span>
-                <Globe className="h-4 w-4 text-slate-600" />
-              </div>
-              <h3 className="font-semibold text-[#003366] text-sm">State Higher Education Policy Matrix</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                State-wise intake vs. enrolment saturation, high-priority inspection tiers, and
-                institutional compliance risk scoring for state governance bodies.
-              </p>
-            </div>
-
-            <div className="pt-3 border-t border-slate-200 flex items-center gap-2">
-              <a
-                href={api.getExportUrl("STATE_POLICY_MATRIX", "csv")}
-                target="_blank"
-                rel="noreferrer"
-                download="state_policy_matrix.csv"
-                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-md bg-[#003366] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#002244] transition-colors"
-              >
-                <Download className="h-3.5 w-3.5" />
-                <span>CSV</span>
-              </a>
-              <button
-                onClick={() => handleInspectReport("STATE_POLICY_MATRIX")}
-                className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white shadow-xs px-3 py-1.5 text-xs font-medium text-[#003366] hover:border-[#003366] transition-colors"
-              >
-                <Code2 className="h-3.5 w-3.5" />
-                <span>JSON</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Report 3: Anomaly Audit Summary */}
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-5 space-y-4 flex flex-col justify-between">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="rounded bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-800 border border-rose-200">
-                  Audit Vigilance
-                </span>
-                <AlertOctagon className="h-4 w-4 text-rose-600" />
-              </div>
-              <h3 className="font-bold text-[#003366] text-sm">Anomaly & Inspection Summary</h3>
-              <p className="text-xs text-slate-700 font-medium leading-relaxed">
-                Audit list of flagged violations, quota overflow events, unverified tokens, and open
-                tri-party dispute tickets for regulatory inspection teams.
-              </p>
-            </div>
-
-            <div className="pt-3 border-t border-slate-200 flex items-center gap-2">
-              <a
-                href={api.getExportUrl("ANOMALY_AUDIT_SUMMARY", "csv")}
-                target="_blank"
-                rel="noreferrer"
-                download="anomaly_audit_summary.csv"
-                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-md bg-[#003366] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#002244] transition-colors"
-              >
-                <Download className="h-3.5 w-3.5" />
-                <span>CSV</span>
-              </a>
-              <button
-                onClick={() => handleInspectReport("ANOMALY_AUDIT_SUMMARY")}
-                className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white shadow-xs px-3 py-1.5 text-xs font-medium text-[#003366] hover:border-[#003366] transition-colors"
-              >
-                <Code2 className="h-3.5 w-3.5" />
-                <span>JSON</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* JSON Payload Inspector Drawer */}
-      {activeReportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="max-h-[85vh] w-full max-w-4xl rounded-xl border border-slate-200 bg-white shadow-xs p-6 flex flex-col shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div>
-                <h3 className="text-sm font-semibold text-[#003366] font-mono">
-                  {activeReportModal} • Export Payload Inspector
+                <h3 className="text-xl sm:text-2xl font-black text-[#232323]">
+                  AICTE Approval Process Handbook (APH 2024–27) Compliance
                 </h3>
-                <p className="text-xs text-slate-600">
-                  Direct JSON payload emitted from /api/v1/reports/export/{activeReportModal}
+                <p className="text-xs text-slate-500">
+                  Statutory Supernumerary Allotments and Headcount Safeguards
                 </p>
               </div>
-              <button
-                onClick={() => setActiveReportModal(null)}
-                className="rounded-md bg-slate-50 border border-slate-200 px-2.5 py-1 text-xs text-slate-600 hover:text-[#003366]"
-              >
-                ✕ Close
-              </button>
             </div>
 
-            <div className="mt-4 flex-1 overflow-auto rounded-lg bg-slate-50 p-4 font-mono text-xs text-[#003366] border border-slate-200">
-              {loadingReportData ? (
-                <div className="text-center py-12 text-slate-600 animate-pulse">
-                  Fetching export payload...
-                </div>
-              ) : (
-                <pre>{JSON.stringify(reportJsonData, null, 2)}</pre>
-              )}
-            </div>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              Under Clause 4.2 of the AICTE Approval Process Handbook, institutions are prohibited from exceeding their Approved Intake
+              without explicit statutory authorization. ApaarNet automatically enforces the 5% Tuition Fee Waiver (TFW),
+              10% Economically Weaker Section (EWS), 15% Foreign National / NRI quota ceilings, and Supernumerary Girls Quota.
+              Any excess candidate registration triggers an immediate sandbox diff rejection, safeguarding institutions from punitive de-affiliation.
+            </p>
 
-            <div className="mt-4 flex justify-end">
-              <a
-                href={api.getExportUrl(activeReportModal, "csv")}
-                target="_blank"
-                rel="noreferrer"
-                download={`${activeReportModal.toLowerCase()}.csv`}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#003366] px-4 py-2 text-xs font-semibold text-white hover:bg-[#002244] transition-colors"
+            <div className="pt-2 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200">
+              <span className="text-xs font-mono font-bold text-slate-500">
+                National Education & AICTE Statutory Architecture Deliverable
+              </span>
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#b9e303] px-5 py-2 text-xs font-bold text-[#232323] hover:bg-[#a6ce02] transition-colors"
               >
-                <Download className="h-4 w-4" />
-                <span>Download as CSV</span>
-              </a>
+                <span>Enter Evaluation Suite</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </div>
         </div>
-      )}
+      </section>
+
+      {/* 6. Footer */}
+      <footer className="border-t border-slate-200 bg-white px-6 py-8 text-xs text-slate-500">
+        <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-[#b9e303]" />
+            <span className="font-semibold text-slate-800">
+              ApaarNet · National Student Data & Quota Verification Mesh
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-4 text-[11px]">
+            <span>AICTE COMPLIANCE ENGINE</span>
+            <span>•</span>
+            <span>UGC Regulation 2022</span>
+            <span>•</span>
+            <span>DPDP Act 2023</span>
+            <span>•</span>
+            <Link href="/login" className="font-bold text-[#232323] underline hover:text-black">
+              Judge / Admin Login
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

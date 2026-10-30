@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   BrainCircuit,
   GitCompare,
@@ -15,7 +16,6 @@ import {
   ArrowRight,
   Sparkles,
   RefreshCw,
-  Search,
   ExternalLink,
   ChevronRight,
   HelpCircle,
@@ -36,8 +36,10 @@ import {
   InstitutionalRiskProfile,
   GraphNode,
 } from "@/lib/api";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { DashboardLayout } from "@/components/DashboardLayout";
 
-export default function IntelligenceChamberPage() {
+function IntelligenceChamberContent() {
   // Navigation Modules Tabs
   const [activeTab, setActiveTab] = useState<
     "ghost-rings" | "risk-rankings" | "collisions-twins" | "disputes"
@@ -56,7 +58,6 @@ export default function IntelligenceChamberPage() {
   // Module 2 State: Risk Rankings & SHAP Waterfall
   const [riskRankings, setRiskRankings] = useState<RiskRankingsResponse | null>(null);
   const [selectedProfile, setSelectedProfile] = useState<InstitutionalRiskProfile | null>(null);
-  const [searchInstitution, setSearchInstitution] = useState("");
   const [loadingRankings, setLoadingRankings] = useState(false);
 
   // Module 3 State: Collisions & Phonetic Twins
@@ -78,6 +79,22 @@ export default function IntelligenceChamberPage() {
     reason: string;
   } | null>(null);
 
+  // Sync tab with query param if present
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+
+  useEffect(() => {
+    if (tabParam === "disputes") {
+      setActiveTab("disputes");
+    } else if (tabParam === "risk-rankings" || tabParam === "shap") {
+      setActiveTab("risk-rankings");
+    } else if (tabParam === "collisions" || tabParam === "collisions-twins") {
+      setActiveTab("collisions-twins");
+    } else if (tabParam === "ghost-rings") {
+      setActiveTab("ghost-rings");
+    }
+  }, [tabParam]);
+
   // Initial load
   useEffect(() => {
     loadAllIntelligence();
@@ -90,27 +107,35 @@ export default function IntelligenceChamberPage() {
     setLoadingDisputes(true);
 
     try {
-      const [ringsData, rankingsData, collisionsData, disputesData] = await Promise.all([
+      const [ringsRes, rankingsRes, collisionsRes, disputesRes] = await Promise.allSettled([
         api.getGhostRings(),
         api.getRiskRankings(),
         api.getCollisions(),
         api.getDisputes(),
       ]);
 
-      setGhostRings(ringsData);
-      if (ringsData.nodes.length > 0) {
-        // default select the shared phone node
-        const phoneNode = ringsData.nodes.find((n) => n.type === "phone") || ringsData.nodes[0];
-        setSelectedNode(phoneNode);
+      if (ringsRes.status === "fulfilled") {
+        setGhostRings(ringsRes.value);
+        if (ringsRes.value.nodes.length > 0) {
+          const phoneNode = ringsRes.value.nodes.find((n) => n.type === "phone") || ringsRes.value.nodes[0];
+          setSelectedNode(phoneNode);
+        }
       }
 
-      setRiskRankings(rankingsData);
-      if (rankingsData.rankings.length > 0) {
-        setSelectedProfile(rankingsData.rankings[0]);
+      if (rankingsRes.status === "fulfilled") {
+        setRiskRankings(rankingsRes.value);
+        if (rankingsRes.value.rankings.length > 0) {
+          setSelectedProfile(rankingsRes.value.rankings[0]);
+        }
       }
 
-      setCollisions(collisionsData);
-      setDisputes(disputesData);
+      if (collisionsRes.status === "fulfilled") {
+        setCollisions(collisionsRes.value);
+      }
+
+      if (disputesRes.status === "fulfilled") {
+        setDisputes(disputesRes.value);
+      }
     } catch (err) {
       console.error("Failed to load intelligence data:", err);
     } finally {
@@ -159,119 +184,174 @@ export default function IntelligenceChamberPage() {
   ];
 
   // Filtered institutions in Risk Rankings
-  const filteredRankings = (riskRankings?.rankings || []).filter(
-    (inst) =>
-      inst.name.toLowerCase().includes(searchInstitution.toLowerCase()) ||
-      inst.aicte_permanent_id.toLowerCase().includes(searchInstitution.toLowerCase()) ||
-      inst.state.toLowerCase().includes(searchInstitution.toLowerCase())
-  );
+  const filteredRankings = riskRankings?.rankings || [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
-      {/* ============================================================== */}
-      {/* HEADER & MODULE SWITCHER NAVIGATION TABS                       */}
-      {/* ============================================================== */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1E3E6E] pb-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="rounded-md border border-slate-300 bg-white px-2.5 py-0.5 text-xs font-medium text-[#003366]">
-                Anomaly Intelligence & Arbitration
-              </span>
-              <span className="text-xs text-slate-600 font-mono">
-                Cross-State Resolution
-              </span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-semibold text-[#003366] mt-1">
-              Intelligence Chamber & Tri-Party Disputes
-            </h1>
-          </div>
-
-          <button
-            onClick={loadAllIntelligence}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-xs font-medium text-[#003366] hover:border-[#003366] transition-colors"
-          >
-            <RefreshCw className="h-3.5 w-3.5 text-slate-600" />
-            <span>Reload AI Models</span>
-          </button>
-        </div>
-
+    <DashboardLayout
+      title="Intelligence Chamber"
+      actionButtonText="Reload AI Models"
+      onActionButtonClick={loadAllIntelligence}
+    >
+      <div className="space-y-6">
         {/* 4 Interactive Module Tabs */}
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <button
+            type="button"
             onClick={() => setActiveTab("ghost-rings")}
-            className={`flex items-center gap-2.5 rounded-xl p-3 text-left transition-all ${
+            className={`flex items-center gap-3 rounded-2xl p-3.5 sm:p-4 text-left transition-all ${
               activeTab === "ghost-rings"
-                ? "bg-purple-50 border border-purple-300 text-purple-900 shadow-sm"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
+                ? "bg-[#232323] text-white shadow-md ring-2 ring-[#232323]"
+                : "border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
             }`}
           >
-            <Network className="h-5 w-5 text-purple-400 flex-shrink-0" />
+            <div
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                activeTab === "ghost-rings"
+                  ? "bg-white/10 text-[#b9e303]"
+                  : "bg-slate-100 text-[#232323]"
+              }`}
+            >
+              <Network className="h-5 w-5" />
+            </div>
             <div>
-              <div className="text-xs font-bold text-slate-900">Module 1: Ghost-Ring Graph</div>
-              <div className="text-[10px] text-slate-600">Case E Bipartite Topology</div>
+              <div
+                className={`text-xs font-black ${
+                  activeTab === "ghost-rings" ? "text-white" : "text-[#232323]"
+                }`}
+              >
+                Module 1: Ghost Rings
+              </div>
+              <div
+                className={`text-[10.5px] ${
+                  activeTab === "ghost-rings" ? "text-slate-300" : "text-slate-500"
+                }`}
+              >
+                Bipartite Syndicate Graph
+              </div>
             </div>
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab("risk-rankings")}
-            className={`flex items-center gap-2.5 rounded-xl p-3 text-left transition-all ${
+            className={`flex items-center gap-3 rounded-2xl p-3.5 sm:p-4 text-left transition-all ${
               activeTab === "risk-rankings"
-                ? "bg-indigo-50 border border-indigo-300 text-indigo-900 shadow-sm"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
+                ? "bg-[#232323] text-white shadow-md ring-2 ring-[#232323]"
+                : "border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
             }`}
           >
-            <BrainCircuit className="h-5 w-5 text-indigo-400 flex-shrink-0" />
+            <div
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                activeTab === "risk-rankings"
+                  ? "bg-white/10 text-[#b9e303]"
+                  : "bg-slate-100 text-[#232323]"
+              }`}
+            >
+              <BrainCircuit className="h-5 w-5" />
+            </div>
             <div>
-              <div className="text-xs font-bold text-slate-900">Module 2: SHAP Waterfall</div>
-              <div className="text-[10px] text-slate-600">Isolation Forest Risk</div>
+              <div
+                className={`text-xs font-black ${
+                  activeTab === "risk-rankings" ? "text-white" : "text-[#232323]"
+                }`}
+              >
+                Module 2: SHAP Waterfall
+              </div>
+              <div
+                className={`text-[10.5px] ${
+                  activeTab === "risk-rankings" ? "text-slate-300" : "text-slate-500"
+                }`}
+              >
+                Isolation Forest Risk
+              </div>
             </div>
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab("collisions-twins")}
-            className={`flex items-center gap-2.5 rounded-xl p-3 text-left transition-all ${
+            className={`flex items-center gap-3 rounded-2xl p-3.5 sm:p-4 text-left transition-all ${
               activeTab === "collisions-twins"
-                ? "bg-blue-50 border border-blue-300 text-blue-900 shadow-sm"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
+                ? "bg-[#232323] text-white shadow-md ring-2 ring-[#232323]"
+                : "border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
             }`}
           >
-            <GitCompare className="h-5 w-5 text-cyan-400 flex-shrink-0" />
+            <div
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                activeTab === "collisions-twins"
+                  ? "bg-white/10 text-[#b9e303]"
+                  : "bg-slate-100 text-[#232323]"
+              }`}
+            >
+              <GitCompare className="h-5 w-5" />
+            </div>
             <div>
-              <div className="text-xs font-bold text-slate-900">Module 3: Cases B, C & D</div>
-              <div className="text-[10px] text-slate-600">UGC Dual-Degree & Twins</div>
+              <div
+                className={`text-xs font-black ${
+                  activeTab === "collisions-twins" ? "text-white" : "text-[#232323]"
+                }`}
+              >
+                Module 3: Cases B, C & D
+              </div>
+              <div
+                className={`text-[10.5px] ${
+                  activeTab === "collisions-twins" ? "text-slate-300" : "text-slate-500"
+                }`}
+              >
+                Dual-Degree & Twins
+              </div>
             </div>
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab("disputes")}
-            className={`flex items-center gap-2.5 rounded-xl p-3 text-left transition-all ${
+            className={`flex items-center gap-3 rounded-2xl p-3.5 sm:p-4 text-left transition-all ${
               activeTab === "disputes"
-                ? "bg-amber-50 border border-amber-300 text-amber-900 shadow-sm"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
+                ? "bg-[#232323] text-white shadow-md ring-2 ring-[#232323]"
+                : "border border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 shadow-2xs"
             }`}
           >
-            <Scale className="h-5 w-5 text-amber-600 flex-shrink-0" />
+            <div
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                activeTab === "disputes"
+                  ? "bg-white/10 text-[#b9e303]"
+                  : "bg-slate-100 text-[#232323]"
+              }`}
+            >
+              <Scale className="h-5 w-5" />
+            </div>
             <div>
-              <div className="text-xs font-bold text-slate-900">Module 4: Dispute Chamber</div>
-              <div className="text-[10px] text-slate-600">Tri-Party Adjudication</div>
+              <div
+                className={`text-xs font-black ${
+                  activeTab === "disputes" ? "text-white" : "text-[#232323]"
+                }`}
+              >
+                Module 4: Dispute Chamber
+              </div>
+              <div
+                className={`text-[10.5px] ${
+                  activeTab === "disputes" ? "text-slate-300" : "text-slate-500"
+                }`}
+              >
+                Tri-Party Adjudication
+              </div>
             </div>
           </button>
         </div>
-      </div>
 
       {/* ============================================================== */}
       {/* MODULE 1: CASE E BIPARTITE GHOST-RING GRAPH VISUALIZER         */}
       {/* ============================================================== */}
       {activeTab === "ghost-rings" && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 space-y-6 shadow-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div className="rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
             <div>
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3 py-0.5 text-xs font-bold text-purple-900">
-                <Sparkles className="h-3.5 w-3.5 text-purple-600" />
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold text-slate-800">
+                <Sparkles className="h-3.5 w-3.5 text-[#232323]" />
                 CASE E DEMONSTRATION • NETWORKX GRAPH AI
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 mt-1">
+              <h2 className="text-xl sm:text-2xl font-black text-[#232323] mt-1">
                 Bipartite Syndicate Admission Ring Visualizer
               </h2>
               <p className="text-xs sm:text-sm text-slate-600">
@@ -280,7 +360,7 @@ export default function IntelligenceChamberPage() {
             </div>
 
             <div className="flex items-center gap-2 text-xs">
-              <span className="rounded bg-rose-100 px-2.5 py-1 text-rose-900 font-bold border border-rose-300">
+              <span className="rounded-xl bg-[#232323] px-3.5 py-1.5 text-[#b9e303] font-bold shadow-xs">
                 Ring #882: 8 Students Across 2 Colleges
               </span>
             </div>
@@ -288,7 +368,7 @@ export default function IntelligenceChamberPage() {
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Left 2 Cols: Interactive SVG Graph Canvas */}
-            <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-xs p-6 flex flex-col items-center justify-center relative overflow-hidden">
+            <div className="lg:col-span-2 rounded-2xl border border-slate-200/80 bg-[#F8F9FA] shadow-xs p-6 flex flex-col items-center justify-center relative overflow-hidden">
               <div className="absolute top-4 left-4 z-10 flex items-center gap-3 text-xs">
                 <span className="flex items-center gap-1.5 text-sky-800 font-semibold">
                   <span className="h-2.5 w-2.5 rounded-full bg-sky-600" />
@@ -306,7 +386,7 @@ export default function IntelligenceChamberPage() {
 
               {/* SVG Topology Canvas */}
               <div className="w-full h-[440px] flex items-center justify-center pt-8">
-                <svg className="w-full h-full max-w-2xl" viewBox="0 0 800 440">
+                <svg className="w-full h-auto max-w-2xl" viewBox="0 0 800 420">
                   <defs>
                     <linearGradient id="edgeGradRose" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.4" />
@@ -407,8 +487,8 @@ export default function IntelligenceChamberPage() {
                         <text
                           x="120"
                           y={stu.y + 4}
-                          fill="#e2e8f0"
-                          fontSize="10"
+                          fill="#0f172a"
+                          fontSize="12"
                           fontWeight="600"
                           textAnchor="end"
                           className="font-sans"
@@ -458,8 +538,8 @@ export default function IntelligenceChamberPage() {
                         <text
                           x="680"
                           y={stu.y + 4}
-                          fill="#e2e8f0"
-                          fontSize="10"
+                          fill="#0f172a"
+                          fontSize="12"
                           fontWeight="600"
                           textAnchor="start"
                           className="font-sans"
@@ -581,14 +661,14 @@ export default function IntelligenceChamberPage() {
             </div>
 
             {/* Right 1 Col: Syndicate Forensics Card */}
-            <div className="rounded-2xl border border-slate-200 bg-white shadow-xs p-6 space-y-5 flex flex-col justify-between">
+            <div className="rounded-2xl border border-slate-200/80 bg-white shadow-xs p-6 space-y-5 flex flex-col justify-between">
               <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                  <span className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <span className="font-bold text-[#232323] text-sm flex items-center gap-2">
                     <ShieldAlert className="h-4 w-4 text-rose-600" />
                     Node Forensic Inspector
                   </span>
-                  <span className="rounded bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-800 font-mono border border-rose-200">
+                  <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-[#232323] font-mono border border-slate-200">
                     {selectedNode?.type?.toUpperCase() || "SYNDICATE"}
                   </span>
                 </div>
@@ -596,39 +676,39 @@ export default function IntelligenceChamberPage() {
                 {selectedNode ? (
                   <div className="space-y-3 text-xs">
                     <div>
-                      <div className="text-[10px] text-slate-700 uppercase font-bold">
-                        Identifier / Name
+                      <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">
+                        IDENTIFIER / NAME
                       </div>
-                      <div className="text-sm font-bold text-slate-900 font-mono mt-0.5">
+                      <div className="text-sm font-bold text-[#232323] font-mono mt-0.5">
                         {selectedNode.label}
                       </div>
                     </div>
 
                     {Object.entries(selectedNode.data || {}).map(([key, val]) => (
-                      <div key={key} className="rounded-lg bg-slate-50 p-2.5 border border-slate-200">
-                        <div className="text-[10px] text-slate-700 uppercase font-bold">
+                      <div key={key} className="rounded-lg bg-[#F8F9FA] p-2.5 border border-slate-200/80">
+                        <div className="text-[10px] text-slate-600 uppercase font-bold">
                           {key.replace(/_/g, " ")}
                         </div>
-                        <div className="text-slate-900 font-mono font-medium mt-0.5">
+                        <div className="text-[#232323] font-mono font-medium mt-0.5">
                           {String(val)}
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="py-12 text-center text-xs text-slate-600 font-medium">
+                  <div className="py-12 text-center text-xs text-slate-500 font-medium">
                     Select a node in the graph
                   </div>
                 )}
               </div>
 
               {/* Ring Metrics Box */}
-              <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 space-y-2 text-xs">
-                <div className="font-bold text-rose-900 flex items-center gap-1.5">
+              <div className="rounded-xl border border-rose-200 bg-rose-50 border-l-4 border-l-rose-600 p-4 space-y-2 text-xs">
+                <div className="font-bold text-rose-800 flex items-center gap-1.5">
                   <BadgeAlert className="h-4 w-4 text-rose-600" />
                   Syndicate Anomaly Signature
                 </div>
-                <div className="text-[11px] text-rose-200/80 leading-relaxed">
+                <div className="text-xs text-rose-950 leading-relaxed">
                   <strong>100% DOB Uniformity:</strong> All 8 students share identical date of birth (2006-01-01),
                   uploaded within a burst window of &le; 15 minutes before the admissions portal deadline.
                 </div>
@@ -642,36 +722,25 @@ export default function IntelligenceChamberPage() {
       {/* MODULE 2: ISOLATION FOREST & SHAP WATERFALL STUDIO             */}
       {/* ============================================================== */}
       {activeTab === "risk-rankings" && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 space-y-6 shadow-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div className="rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
             <div>
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/40 bg-indigo-950/70 px-3 py-0.5 text-xs font-bold text-indigo-300">
-                <BrainCircuit className="h-3.5 w-3.5" />
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-0.5 text-xs font-bold text-slate-800">
+                <BrainCircuit className="h-3.5 w-3.5 text-[#232323]" />
                 EXPLAINABLE AI • SHAP TREE EXPLAINER
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 mt-1">
+              <h2 className="text-xl sm:text-2xl font-black text-[#0B0F19] mt-1">
                 Institutional Anomaly Risk Rankings & SHAP Waterfalls
               </h2>
               <p className="text-xs sm:text-sm text-slate-600">
                 Isolation Forest model ranking all 50 colleges by anomaly score, backed by mathematical SHAP feature attributions.
               </p>
             </div>
-
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-500" />
-              <input
-                type="text"
-                placeholder="Search college or ID..."
-                value={searchInstitution}
-                onChange={(e) => setSearchInstitution(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-white shadow-xs pl-8 pr-3 py-2 text-xs text-slate-800 placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
-              />
-            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Left 1 Col: Priority Inspection Queue */}
-            <div className="rounded-2xl border border-slate-200 bg-white shadow-xs p-4 space-y-3 overflow-hidden">
+            <div className="rounded-2xl border border-[#F2FFC7] bg-white shadow-xs p-4 space-y-3 overflow-hidden">
               <div className="flex justify-between items-center px-2 text-xs font-bold text-slate-600">
                 <span>Priority Inspection Queue</span>
                 <span>Risk Score</span>
@@ -687,8 +756,8 @@ export default function IntelligenceChamberPage() {
                       onClick={() => setSelectedProfile(inst)}
                       className={`p-3 rounded-xl border cursor-pointer transition-all ${
                         isSelected
-                          ? "border-indigo-500 bg-indigo-950/40 shadow-md"
-                          : "border-slate-200 bg-slate-50 hover:border-slate-300"
+                          ? "border-2 border-[#0B0F19] bg-[#F7FFDD] shadow-sm"
+                          : "border border-[#F2FFC7] bg-[#FCFFF4] hover:border-slate-300"
                       }`}
                     >
                       <div className="flex items-center justify-between text-xs font-mono">
@@ -696,17 +765,17 @@ export default function IntelligenceChamberPage() {
                         <span
                           className={`font-bold px-1.5 py-0.2 rounded text-[11px] ${
                             isHighRisk
-                              ? "bg-rose-950 text-rose-400 border border-rose-800"
-                              : "bg-emerald-950 text-emerald-400 border border-emerald-800"
+                              ? "bg-rose-100 text-rose-800 border border-rose-300"
+                              : "bg-[#0B0F19] text-[#E5FF8F] border border-[#E5FF8F]/40"
                           }`}
                         >
                           {inst.risk_score.toFixed(1)} / 100
                         </span>
                       </div>
-                      <div className="font-bold text-slate-900 text-xs mt-1 truncate">
+                      <div className="font-bold text-[#0B0F19] text-xs mt-1 truncate">
                         {inst.name}
                       </div>
-                      <div className="text-[10px] text-slate-600 font-mono mt-0.5">
+                      <div className="text-[10px] text-slate-500 font-mono mt-0.5">
                         {inst.aicte_permanent_id} • {inst.state}
                       </div>
                     </div>
@@ -716,16 +785,16 @@ export default function IntelligenceChamberPage() {
             </div>
 
             {/* Right 2 Cols: SHAP Waterfall Studio */}
-            <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-xs p-6 space-y-6">
+            <div className="lg:col-span-2 rounded-2xl border border-[#F2FFC7] bg-white shadow-xs p-6 space-y-6">
               {selectedProfile ? (
                 <div className="space-y-5">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F2FFC7] pb-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-bold text-slate-900">
+                        <h3 className="text-lg font-bold text-[#0B0F19]">
                           {selectedProfile.name}
                         </h3>
-                        <span className="text-xs font-mono text-slate-600">
+                        <span className="text-xs font-mono text-slate-500">
                           ({selectedProfile.aicte_permanent_id})
                         </span>
                       </div>
@@ -739,8 +808,8 @@ export default function IntelligenceChamberPage() {
                       <span
                         className={`text-sm font-black px-2.5 py-1 rounded font-mono ${
                           selectedProfile.risk_score >= 80
-                            ? "bg-rose-950 text-rose-300 border border-rose-800"
-                            : "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                            ? "bg-rose-100 text-rose-800 border border-rose-300"
+                            : "bg-[#0B0F19] text-[#E5FF8F] border border-[#E5FF8F]/40"
                         }`}
                       >
                         {selectedProfile.risk_score.toFixed(1)}
@@ -750,9 +819,9 @@ export default function IntelligenceChamberPage() {
 
                   {/* SHAP Feature Attribution Waterfall Bars */}
                   <div className="space-y-4">
-                    <div className="text-xs font-bold text-slate-900 flex items-center justify-between">
+                    <div className="text-xs font-bold text-[#0B0F19] flex items-center justify-between">
                       <span>SHAP Feature Attribution (TreeExplainer)</span>
-                      <span className="text-[11px] text-slate-600 font-mono">
+                      <span className="text-[11px] text-slate-500 font-mono">
                         Base Value: 20.0 pts
                       </span>
                     </div>
@@ -768,17 +837,17 @@ export default function IntelligenceChamberPage() {
                               </span>
                               <span
                                 className={`font-bold ${
-                                  isPositive ? "text-rose-400" : "text-emerald-400"
+                                  isPositive ? "text-rose-600" : "text-emerald-700"
                                 }`}
                               >
                                 {isPositive ? `+${f.contribution_pts.toFixed(1)}` : f.contribution_pts.toFixed(1)} pts
                               </span>
                             </div>
 
-                            <div className="h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+                            <div className="h-2 w-full rounded-full bg-slate-200 overflow-hidden">
                               <div
                                 className={`h-full rounded-full ${
-                                  isPositive ? "bg-rose-500" : "bg-emerald-500"
+                                  isPositive ? "bg-rose-500" : "bg-emerald-600"
                                 }`}
                                 style={{
                                   width: `${Math.min(100, Math.abs(f.contribution_pts) * 2.5)}%`,
@@ -796,13 +865,13 @@ export default function IntelligenceChamberPage() {
                   </div>
 
                   {/* Plain English Summary */}
-                  <div className="rounded-xl border border-indigo-900/60 bg-indigo-950/30 p-4 text-xs text-indigo-200 leading-relaxed">
-                    <span className="font-bold text-slate-900">AI Auditor Recommendation:</span>{" "}
+                  <div className="rounded-xl border border-[#F2FFC7] bg-[#F7FFDD] p-4 text-xs text-[#0B0F19] leading-relaxed">
+                    <span className="font-bold text-[#0B0F19]">AI Auditor Recommendation:</span>{" "}
                     {selectedProfile.plain_english_summary}
                   </div>
                 </div>
               ) : (
-                <div className="py-20 text-center text-xs text-slate-700 font-medium">
+                <div className="py-20 text-center text-xs text-slate-500 font-medium">
                   Select an institution on the left to inspect its SHAP waterfall.
                 </div>
               )}
@@ -812,17 +881,18 @@ export default function IntelligenceChamberPage() {
       )}
 
       {/* ============================================================== */}
+      {/* ============================================================== */}
       {/* MODULE 3: CASES B, C & D ENTITY RESOLUTION                     */}
       {/* ============================================================== */}
       {activeTab === "collisions-twins" && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 space-y-6 shadow-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div className="rounded-2xl border border-[#F2FFC7] bg-white p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F2FFC7] pb-5">
             <div>
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/40 bg-cyan-950/70 px-3 py-0.5 text-xs font-bold text-cyan-300">
-                <GitCompare className="h-3.5 w-3.5" />
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-[#EDFFB1] bg-[#F7FFDD] px-3 py-0.5 text-xs font-bold text-[#0B0F19]">
+                <GitCompare className="h-3.5 w-3.5 text-[#0B0F19]" />
                 CASES B, C & D • UGC 2022 & FELLEGI-SUNTER
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 mt-1">
+              <h2 className="text-xl sm:text-2xl font-black text-[#0B0F19] mt-1">
                 Cross-Institution Entity Resolution & Dual-Degree Matrix
               </h2>
               <p className="text-xs sm:text-sm text-slate-600">
@@ -831,13 +901,13 @@ export default function IntelligenceChamberPage() {
             </div>
 
             {/* Sub-tab Switcher */}
-            <div className="flex items-center rounded-xl border border-slate-200 bg-white shadow-xs p-1">
+            <div className="flex items-center rounded-xl border border-[#F2FFC7] bg-[#FCFFF4] shadow-xs p-1">
               <button
                 onClick={() => setCollisionSubTab("exact-collisions")}
                 className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                   collisionSubTab === "exact-collisions"
-                    ? "bg-cyan-500 text-slate-950"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#0B0F19] text-[#E5FF8F] font-bold shadow-xs"
+                    : "text-slate-600 hover:text-[#0B0F19]"
                 }`}
               >
                 Cases B & C: Exact APAAR Matrix
@@ -846,8 +916,8 @@ export default function IntelligenceChamberPage() {
                 onClick={() => setCollisionSubTab("phonetic-twins")}
                 className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                   collisionSubTab === "phonetic-twins"
-                    ? "bg-cyan-500 text-slate-950"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#0B0F19] text-[#E5FF8F] font-bold shadow-xs"
+                    : "text-slate-600 hover:text-[#0B0F19]"
                 }`}
               >
                 Case D: Indic Phonetic & Twins
@@ -859,35 +929,35 @@ export default function IntelligenceChamberPage() {
           {collisionSubTab === "exact-collisions" && (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {/* Case B: Lawful UGC Dual-Degree */}
-              <div className="rounded-2xl border-2 border-emerald-500/40 bg-emerald-950/20 p-6 space-y-4">
+              <div className="rounded-2xl border-2 border-emerald-500/40 bg-[#FCFFF4] p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="rounded bg-emerald-950 px-2 py-0.5 text-xs font-bold text-emerald-300 border border-emerald-700">
+                  <span className="rounded bg-[#0B0F19] px-2 py-0.5 text-xs font-bold text-[#E5FF8F] border border-[#E5FF8F]/40">
                     CASE B • LAWFUL UGC 2022
                   </span>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600" />
                 </div>
 
                 <div className="space-y-1">
-                  <div className="text-lg font-bold text-slate-900">Aarav Sharma</div>
-                  <div className="text-xs font-mono text-[#003366] font-bold">APAAR: 482910384715</div>
+                  <div className="text-lg font-bold text-[#0B0F19]">Aarav Sharma</div>
+                  <div className="text-xs font-mono text-[#0B0F19] font-bold">APAAR: 482910384715</div>
                 </div>
 
                 {/* Side-by-side enrolment cards */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-xs">
-                  <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-3 space-y-1">
-                    <div className="text-[10px] text-slate-700 font-bold uppercase">Enrolment #1</div>
-                    <div className="font-bold text-slate-900">Apex Institute of Tech</div>
-                    <div className="text-slate-800 font-medium">B.Tech Mechanical</div>
-                    <div className="rounded bg-blue-50 px-2 py-0.5 text-[10px] text-[#003366] font-mono font-bold inline-block border border-blue-200">
+                  <div className="rounded-xl border border-[#F2FFC7] bg-white shadow-xs p-3 space-y-1">
+                    <div className="text-[10px] text-slate-500 font-bold uppercase">Enrolment #1</div>
+                    <div className="font-bold text-[#0B0F19]">Apex Institute of Tech</div>
+                    <div className="text-slate-700 font-medium">B.Tech Mechanical</div>
+                    <div className="rounded bg-[#F7FFDD] px-2 py-0.5 text-[10px] text-[#0B0F19] font-mono font-bold inline-block border border-[#F2FFC7]">
                       REGULAR_PHYSICAL
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-3 space-y-1">
-                    <div className="text-[10px] text-slate-700 font-bold uppercase">Enrolment #2</div>
-                    <div className="font-bold text-slate-900">COEP Technological Univ</div>
-                    <div className="text-slate-800 font-medium">Diploma Data Science</div>
-                    <div className="rounded bg-purple-50 px-2 py-0.5 text-[10px] text-purple-900 font-mono font-bold inline-block border border-purple-200">
+                  <div className="rounded-xl border border-[#F2FFC7] bg-white shadow-xs p-3 space-y-1">
+                    <div className="text-[10px] text-slate-500 font-bold uppercase">Enrolment #2</div>
+                    <div className="font-bold text-[#0B0F19]">COEP Technological Univ</div>
+                    <div className="text-slate-700 font-medium">Diploma Data Science</div>
+                    <div className="rounded bg-[#F7FFDD] px-2 py-0.5 text-[10px] text-[#0B0F19] font-mono font-bold inline-block border border-[#F2FFC7]">
                       ONLINE_ODL
                     </div>
                   </div>
@@ -895,7 +965,7 @@ export default function IntelligenceChamberPage() {
 
                 <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 space-y-1 text-xs text-emerald-950">
                   <div className="font-bold text-emerald-900 flex items-center gap-1.5">
-                    <ShieldCheck className="h-4 w-4 text-[#046A38]" />
+                    <ShieldCheck className="h-4 w-4 text-emerald-700" />
                     Verdict: LAWFUL_UGC_DUAL_DEGREE
                   </div>
                   <div className="text-[11px] text-emerald-800 leading-relaxed font-medium">
@@ -906,7 +976,7 @@ export default function IntelligenceChamberPage() {
               </div>
 
               {/* Case C: Illegal Cross-State Concurrent Regular */}
-              <div className="rounded-2xl border-2 border-rose-300 bg-rose-50/40 p-6 space-y-4">
+              <div className="rounded-2xl border-2 border-rose-300 bg-[#FCFFF4] p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="rounded bg-rose-100 px-2.5 py-1 text-xs font-bold text-rose-900 border border-rose-300">
                     CASE C • FRAUD COLLISION
@@ -915,25 +985,25 @@ export default function IntelligenceChamberPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <div className="text-lg font-bold text-slate-900">Priya Nair</div>
-                  <div className="text-xs font-mono text-[#003366] font-bold">APAAR: 739201846297</div>
+                  <div className="text-lg font-bold text-[#0B0F19]">Priya Nair</div>
+                  <div className="text-xs font-mono text-[#0B0F19] font-bold">APAAR: 739201846297</div>
                 </div>
 
                 {/* Side-by-side enrolment cards */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-xs">
-                  <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-3 space-y-1">
-                    <div className="text-[10px] text-slate-700 font-bold uppercase">Enrolment #1 (Tamil Nadu)</div>
-                    <div className="font-bold text-slate-900">PSG College of Tech</div>
-                    <div className="text-slate-800 font-medium">B.Tech Computer Science</div>
+                  <div className="rounded-xl border border-[#F2FFC7] bg-white shadow-xs p-3 space-y-1">
+                    <div className="text-[10px] text-slate-500 font-bold uppercase">Enrolment #1 (Tamil Nadu)</div>
+                    <div className="font-bold text-[#0B0F19]">PSG College of Tech</div>
+                    <div className="text-slate-700 font-medium">B.Tech Computer Science</div>
                     <div className="rounded bg-rose-50 px-2 py-0.5 text-[10px] text-rose-900 font-mono font-bold inline-block border border-rose-200">
                       REGULAR_PHYSICAL
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-3 space-y-1">
-                    <div className="text-[10px] text-slate-700 font-bold uppercase">Enrolment #2 (Karnataka)</div>
-                    <div className="font-bold text-slate-900">BMS College of Engg</div>
-                    <div className="text-slate-800 font-medium">B.Tech Electronics</div>
+                  <div className="rounded-xl border border-[#F2FFC7] bg-white shadow-xs p-3 space-y-1">
+                    <div className="text-[10px] text-slate-500 font-bold uppercase">Enrolment #2 (Karnataka)</div>
+                    <div className="font-bold text-[#0B0F19]">BMS College of Engg</div>
+                    <div className="text-slate-700 font-medium">B.Tech Electronics</div>
                     <div className="rounded bg-rose-50 px-2 py-0.5 text-[10px] text-rose-900 font-mono font-bold inline-block border border-rose-200">
                       REGULAR_PHYSICAL
                     </div>
@@ -954,7 +1024,7 @@ export default function IntelligenceChamberPage() {
                 <div className="pt-1 flex justify-end">
                   <button
                     onClick={() => setActiveTab("disputes")}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-rose-400 hover:text-rose-300"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0B0F19] hover:underline"
                   >
                     <span>Open Adjudication Chamber</span>
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -1132,18 +1202,18 @@ export default function IntelligenceChamberPage() {
                           Dispute #{ticket.id.slice(0, 8)}
                         </span>
                         <span
-                          className={`px-2.5 py-0.5 rounded text-[11px] font-bold ${
+                          className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
                             isOpen
-                              ? "bg-amber-950 text-amber-300 border border-amber-800 animate-pulse"
+                              ? "bg-amber-100 text-amber-900 border border-amber-300 animate-pulse"
                               : ticket.status === "RESOLVED_VALID"
-                              ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
-                              : "bg-rose-950 text-rose-300 border border-rose-800"
+                              ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
+                              : "bg-rose-100 text-rose-900 border border-rose-300"
                           }`}
                         >
                           {ticket.status}
                         </span>
                       </div>
-                      <div className="text-xs text-[#003366] font-mono font-bold mt-0.5">
+                      <div className="text-xs text-[#232323] font-mono font-bold mt-0.5">
                         Student APAAR / Token: {ticket.student_apaar_or_token}
                       </div>
                     </div>
@@ -1202,9 +1272,9 @@ export default function IntelligenceChamberPage() {
                   {isOpen && (
                     <div className="pt-2">
                       {isSelectedForAction ? (
-                        <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-5 space-y-4">
+                        <div className="rounded-2xl border-2 border-amber-300 bg-amber-50/70 p-5 space-y-4 shadow-sm">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-slate-900 text-xs">
+                            <span className="font-bold text-[#232323] text-xs">
                               AICTE Adjudication Hearing Console
                             </span>
                             <button
@@ -1217,23 +1287,23 @@ export default function IntelligenceChamberPage() {
 
                           {/* Decision Selector */}
                           <div className="flex items-center gap-4 text-xs font-semibold">
-                            <label className="flex items-center gap-2 cursor-pointer text-emerald-300">
+                            <label className="flex items-center gap-2 cursor-pointer text-emerald-900 font-bold">
                               <input
                                 type="radio"
                                 name="decision"
                                 checked={adjudicationDecision === "RESOLVED_VALID"}
                                 onChange={() => setAdjudicationDecision("RESOLVED_VALID")}
-                                className="accent-emerald-500"
+                                className="accent-emerald-600"
                               />
                               Approve as Lawful Exception (RESOLVED_VALID)
                             </label>
-                            <label className="flex items-center gap-2 cursor-pointer text-rose-300">
+                            <label className="flex items-center gap-2 cursor-pointer text-rose-900 font-bold">
                               <input
                                 type="radio"
                                 name="decision"
                                 checked={adjudicationDecision === "CONFIRMED_DUPLICATE"}
                                 onChange={() => setAdjudicationDecision("CONFIRMED_DUPLICATE")}
-                                className="accent-rose-500"
+                                className="accent-rose-600"
                               />
                               Confirm Duplicate Violation (CONFIRMED_DUPLICATE)
                             </label>
@@ -1248,8 +1318,9 @@ export default function IntelligenceChamberPage() {
                               {quickReasons.map((qr, idx) => (
                                 <button
                                   key={idx}
+                                  type="button"
                                   onClick={() => setAdjudicationReason(qr)}
-                                  className="rounded bg-slate-100 border border-slate-200 px-2.5 py-1 text-[11px] text-slate-700 hover:text-slate-900 hover:border-slate-300 text-left"
+                                  className="rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-[11px] text-slate-700 hover:border-slate-400 hover:bg-slate-50 transition-colors text-left"
                                 >
                                   {qr.slice(0, 48)}...
                                 </button>
@@ -1264,7 +1335,7 @@ export default function IntelligenceChamberPage() {
                               value={adjudicationReason}
                               onChange={(e) => setAdjudicationReason(e.target.value)}
                               placeholder="Enter official adjudication order rationale..."
-                              className="w-full rounded-xl border border-slate-300 bg-slate-50 p-3 text-xs text-slate-900 placeholder-slate-500 focus:border-amber-400 focus:outline-none"
+                              className="w-full rounded-xl border border-slate-300 bg-white p-3 text-xs text-slate-900 placeholder-slate-400 focus:border-[#232323] focus:outline-none"
                             />
                           </div>
 
@@ -1273,9 +1344,9 @@ export default function IntelligenceChamberPage() {
                             <button
                               onClick={() => handleResolveDispute(ticket.id)}
                               disabled={submittingDispute}
-                              className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-xs font-bold text-slate-950 hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                              className="inline-flex items-center gap-2 rounded-xl bg-[#232323] px-5 py-2.5 text-xs font-bold text-white hover:bg-black transition-all shadow-md disabled:opacity-50"
                             >
-                              <Lock className="h-3.5 w-3.5" />
+                              <Lock className="h-3.5 w-3.5 text-[#b9e303]" />
                               <span>
                                 {submittingDispute
                                   ? "Sealing in Merkle Ledger..."
@@ -1291,9 +1362,9 @@ export default function IntelligenceChamberPage() {
                               setAdjudicatingTicketId(ticket.id);
                               setAdjudicationReason(quickReasons[0]);
                             }}
-                            className="inline-flex items-center gap-2 rounded-xl border border-amber-500/50 bg-amber-950/60 px-4 py-2 text-xs font-bold text-amber-200 hover:bg-amber-900/60 hover:text-slate-900 transition-colors"
+                            className="inline-flex items-center gap-2 rounded-xl bg-[#232323] px-4 py-2 text-xs font-bold text-white hover:bg-black transition-all shadow-xs"
                           >
-                            <Scale className="h-4 w-4" />
+                            <Scale className="h-4 w-4 text-[#b9e303]" />
                             <span>Adjudicate Dispute as AICTE Officer</span>
                           </button>
                         </div>
@@ -1307,5 +1378,24 @@ export default function IntelligenceChamberPage() {
         </div>
       )}
     </div>
+  </DashboardLayout>
+  );
+}
+
+export default function IntelligenceChamberPage() {
+  return (
+    <ProtectedRoute requiredRole="NATIONAL_ADMIN">
+      <Suspense
+        fallback={
+          <DashboardLayout title="Intelligence Chamber">
+            <div className="flex h-64 items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#232323] border-t-transparent" />
+            </div>
+          </DashboardLayout>
+        }
+      >
+        <IntelligenceChamberContent />
+      </Suspense>
+    </ProtectedRoute>
   );
 }

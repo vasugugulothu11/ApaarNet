@@ -13,6 +13,7 @@ from app.models.student import StudentEnrolment
 from app.models.dispute import DisputeTicket
 from app.models.consent import ConsentRecord
 from app.models.audit import MerkleAuditLog
+from app.models.user import User
 
 __all__ = [
     "InstitutionType",
@@ -29,4 +30,5 @@ __all__ = [
     "DisputeTicket",
     "ConsentRecord",
     "MerkleAuditLog",
+    "User",
 ]

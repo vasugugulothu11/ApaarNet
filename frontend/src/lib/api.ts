@@ -1,15 +1,44 @@
 /**
  * ApaarNet API Client & Typed SDK
- * Covers all 26 REST Endpoints for AICTE SIH26263 Platform
+ * Covers all 26 REST Endpoints for AICTE ApaarNet National Platform
  */
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+export function getRbacSessionHeaders(): Record<string, string> {
+  if (typeof window === "undefined") {
+    return {
+      "X-ApaarNet-Role": "NATIONAL_ADMIN",
+    };
+  }
+  try {
+    const raw = localStorage.getItem("apaarnet_rbac_session");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      const headers: Record<string, string> = {};
+      if (parsed.role) {
+        headers["X-ApaarNet-Role"] = parsed.role;
+      }
+      if (parsed.access_token) {
+        headers["Authorization"] = `Bearer ${parsed.access_token}`;
+      }
+      return headers;
+    }
+  } catch {
+    // Ignore storage parse errors
+  }
+  return {
+    "X-ApaarNet-Role": "NATIONAL_ADMIN",
+  };
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const url = `${BASE_URL}${path}`;
+  const rbacHeaders = getRbacSessionHeaders();
   const headers = {
     "Content-Type": "application/json",
-    ...(options.headers || {}),
+    ...rbacHeaders,
+    ...((options.headers as Record<string, string>) || {}),
   };
 
   const res = await fetch(url, { ...options, headers });
@@ -29,6 +58,47 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 // ==========================================
 // 1. SYSTEM & ADMIN INTERFACES
 // ==========================================
+export interface RbacPersona {
+  role: string;
+  name: string;
+  title: string;
+  organization: string;
+  identifier: string;
+  scopes: string[];
+  allowed_portals: string[];
+  description: string;
+  badge_color: string;
+}
+
+export interface RbacRolesResponse {
+  status: string;
+  roles: RbacPersona[];
+  role_map: Record<string, RbacPersona>;
+  supported_auth_methods: {
+    id: string;
+    label: string;
+    description: string;
+    badge: string;
+  }[];
+}
+
+export interface RbacLoginResponse {
+  access_token: string;
+  token_type: string;
+  session_id: string;
+  role: string;
+  email?: string;
+  allowed_dashboard_path?: string;
+  persona: RbacPersona;
+  scopes: string[];
+  allowed_portals: string[];
+  auth_method: string;
+  expires_at: string;
+  audit_sequence_id: number;
+  audit_record_hash: string;
+  checkpoint_signature?: string;
+}
+
 export interface HealthStatus {
   status: string;
   service: string;
@@ -530,11 +600,22 @@ export const api = {
   previewMapping: (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
+    const rbacHeaders = getRbacSessionHeaders();
     return fetch(`${BASE_URL}/api/v1/ingest/preview-mapping`, {
       method: "POST",
       body: formData,
-    }).then((res) => {
-      if (!res.ok) throw new Error(`Mapping error: ${res.statusText}`);
+      headers: { ...rbacHeaders },
+    }).then(async (res) => {
+      if (!res.ok) {
+        let errorDetail = res.statusText;
+        try {
+          const errJson = await res.json();
+          errorDetail = errJson.detail || JSON.stringify(errJson);
+        } catch {
+          // fallback
+        }
+        throw new Error(`Mapping error [${res.status}]: ${errorDetail}`);
+      }
       return res.json() as Promise<PreviewMappingResponse>;
     });
   },
@@ -650,4 +731,18 @@ export const api = {
     request<TamperSimulationResponse>("/api/v1/audit/simulate-tamper", {
       method: "POST",
     }),
+
+  // --- RBAC Authentication & Session Management ---
+  getRbacRoles: () => request<RbacRolesResponse>("/api/v1/auth/roles"),
+  loginRbacRole: (role: string, authMethod: string = "JANPARICHAY_SSO") =>
+    request<RbacLoginResponse>("/api/v1/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ role, auth_method: authMethod }),
+    }),
+  loginCredentials: (email: string, password: string) =>
+    request<RbacLoginResponse>("/api/v1/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    }),
+  getMe: () => request<{ authenticated: boolean; claims?: any; persona?: RbacPersona }>("/api/v1/auth/me"),
 };

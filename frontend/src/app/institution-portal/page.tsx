@@ -105,6 +105,43 @@ export default function InstitutionPortalPage() {
   const [quotaStatus, setQuotaStatus] = useState<QuotaLedgerResponse | null>(null);
   const [loadingQuota, setLoadingQuota] = useState(false);
 
+  // Stream Filter State (PGDM vs Engineering/Degree Unification)
+  const [streamFilter, setStreamFilter] = useState<"ALL" | "PGDM" | "ENGINEERING">("ALL");
+
+  const isPgdmInstitution = (inst: InstitutionPortalItem) => {
+    return (
+      inst.institution_type === "PGDM" ||
+      inst.name.toLowerCase().includes("pgdm") ||
+      inst.name.toLowerCase().includes("management") ||
+      (inst.program_quotas || []).some(
+        (q) =>
+          q.program_name.toLowerCase().includes("pgdm") ||
+          q.program_name.toLowerCase().includes("management")
+      )
+    );
+  };
+
+  const filteredInstitutions = institutions.filter((inst) => {
+    if (streamFilter === "ALL") return true;
+    const isPgdm = isPgdmInstitution(inst);
+    return streamFilter === "PGDM" ? isPgdm : !isPgdm;
+  });
+
+  const handleStreamFilterChange = (filter: "ALL" | "PGDM" | "ENGINEERING") => {
+    setStreamFilter(filter);
+    const subset = institutions.filter((inst) => {
+      if (filter === "ALL") return true;
+      const isPgdm = isPgdmInstitution(inst);
+      return filter === "PGDM" ? isPgdm : !isPgdm;
+    });
+    if (subset.length > 0) {
+      const currentInstInSubset = subset.some((inst) => inst.id === selectedInstId);
+      if (!currentInstInSubset) {
+        handleSelectInstitution(subset[0].id);
+      }
+    }
+  };
+
   // Ingestion Step 1 State: Schema Mapping
   const [activeStep, setActiveStep] = useState<1 | 2 | 3>(1);
   const [rawRows, setRawRows] = useState<Record<string, any>[]>([]);
@@ -282,20 +319,99 @@ export default function InstitutionPortalPage() {
   const currentInst = institutions.find((i) => i.id === selectedInstId);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
+    <div className="max-w-[1600px] mx-auto p-6 sm:p-10 space-y-8">
+      {/* Statutory Mandate Alignment Callout: PGDM vs. Engineering/Degree Ingestion Streams */}
+      <div className="rounded-2xl border border-[#F2FFC7] bg-[#FCFFF4] p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+          <div className="space-y-2 max-w-4xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#F2FFC7] bg-[#F7FFDD] px-3 py-0.5 text-xs font-bold text-[#0B0F19]">
+                <span className="h-2 w-2 rounded-full bg-[#E5FF8F] ring-1 ring-[#0B0F19]" />
+                National Statutory Mandate Alignment
+              </span>
+              <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-900">
+                APH 2024–27 Clause 4.2 & Chapter VII
+              </span>
+            </div>
+
+            <h2 className="text-base sm:text-lg font-bold text-[#0B0F19]">
+              AICTE APH 2024–27 Mandate Compliance: Unifying PGDM & Non-PGDM Ingestion Streams
+            </h2>
+
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              Bridging the statutory gap specified in AICTE regulations: uniting historical aggregate headcount reporting for Engineering, Technology, Architecture, and Diploma institutions with student-level APAAR biometric identity tracking, while maintaining detailed annual schema compliance for PGDM institutions.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 font-mono pt-1">
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-emerald-600" />
+                <strong className="text-slate-800 font-sans">PGDM Stream:</strong> Annual Detailed Schema & Strict Quota Partitions
+              </span>
+              <span className="text-slate-300 hidden sm:inline">|</span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-[#0B0F19]" />
+                <strong className="text-slate-800 font-sans">Engineering / Tech / Arch:</strong> APAAR Verhoeff D₅ Biometric Verification Mesh
+              </span>
+            </div>
+          </div>
+
+          {/* Quick-Filter Toggle */}
+          <div className="shrink-0 space-y-1.5">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 block">
+              Stream Quick-Filter:
+            </label>
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-1.5 rounded-xl border border-[#F2FFC7] bg-white p-1 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => handleStreamFilterChange("ALL")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-left ${
+                  streamFilter === "ALL"
+                    ? "bg-[#0B0F19] text-[#E5FF8F] shadow-xs font-bold"
+                    : "text-slate-700 hover:bg-[#F7FFDD]"
+                }`}
+              >
+                All AICTE Institutions (50)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleStreamFilterChange("PGDM")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-left ${
+                  streamFilter === "PGDM"
+                    ? "bg-[#0B0F19] text-[#E5FF8F] shadow-xs font-bold"
+                    : "text-slate-700 hover:bg-[#F7FFDD]"
+                }`}
+              >
+                PGDM (Annual Detailed Schema)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleStreamFilterChange("ENGINEERING")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-left ${
+                  streamFilter === "ENGINEERING"
+                    ? "bg-[#0B0F19] text-[#E5FF8F] shadow-xs font-bold"
+                    : "text-slate-700 hover:bg-[#F7FFDD]"
+                }`}
+              >
+                Engineering / Tech / Architecture (APAAR Biometric Mesh)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* 1. INSTITUTION & PROGRAM SELECTOR TOP BAR */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-xs p-6 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1E3E6E] pb-4">
+      <div className="rounded-2xl border border-[#F2FFC7] bg-white shadow-xs p-6 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#F2FFC7] pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="rounded-md border border-slate-300 bg-white px-2.5 py-0.5 text-xs font-medium text-[#003366]">
+              <span className="rounded-md border border-[#F2FFC7] bg-[#FCFFF4] px-2.5 py-0.5 text-xs font-medium text-[#0B0F19]">
                 Automated Ingestion Sandbox
               </span>
               <span className="text-xs text-slate-600 font-mono">
                 Statutory Quota Validation
               </span>
             </div>
-            <h1 className="text-2xl font-semibold text-[#003366] mt-1">
+            <h1 className="text-2xl font-bold text-[#0B0F19] mt-1">
               Institution Registrar & Ingestion Sandbox
             </h1>
           </div>
@@ -310,7 +426,7 @@ export default function InstitutionPortalPage() {
                 const apex = institutions.find((i) => i.aicte_permanent_id === "1-10000001");
                 if (apex) handleSelectInstitution(apex.id);
               }}
-              className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-[#003366] hover:border-[#003366] transition-colors"
+              className="rounded-xl border border-[#F2FFC7] bg-white px-3 py-1.5 text-xs font-medium text-[#0B0F19] hover:bg-[#F7FFDD] transition-colors"
             >
               Apex Tech
             </button>
@@ -319,7 +435,7 @@ export default function InstitutionPortalPage() {
                 const deccan = institutions.find((i) => i.name.includes("Deccan"));
                 if (deccan) handleSelectInstitution(deccan.id);
               }}
-              className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-[#003366] hover:border-[#003366] transition-colors"
+              className="rounded-xl border border-[#F2FFC7] bg-white px-3 py-1.5 text-xs font-medium text-[#0B0F19] hover:bg-[#F7FFDD] transition-colors"
             >
               Deccan Valley
             </button>
@@ -338,9 +454,9 @@ export default function InstitutionPortalPage() {
                 onChange={(e) => handleSelectInstitution(e.target.value)}
                 className="w-full appearance-none rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-xs font-medium text-[#003366] shadow-inner focus:border-[#003366] focus:outline-none"
               >
-                {institutions.map((inst) => (
+                {filteredInstitutions.map((inst) => (
                   <option key={inst.id} value={inst.id}>
-                    {inst.name} ({inst.aicte_permanent_id}) — {inst.state}
+                    {inst.name} ({inst.aicte_permanent_id}) — {inst.state} [{isPgdmInstitution(inst) ? "PGDM" : "Engineering"}]
                   </option>
                 ))}
               </select>
@@ -377,8 +493,8 @@ export default function InstitutionPortalPage() {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sliders className="h-4 w-4 text-[#046A38]" />
-            <h2 className="text-sm font-bold text-[#003366] uppercase tracking-wider">
+            <Sliders className="h-4 w-4 text-[#0B0F19]" />
+            <h2 className="text-sm font-bold text-[#0B0F19] uppercase tracking-wider">
               Real-Time APH 2024–27 Quota Capacity Gauges
             </h2>
           </div>
@@ -562,24 +678,24 @@ export default function InstitutionPortalPage() {
       {/* ============================================================== */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-xs p-6 space-y-6">
         {/* Step Indicator Tabs */}
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 border-b border-slate-200 pb-4">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 border-b border-[#F2FFC7] pb-4">
           <button
             onClick={() => setActiveStep(1)}
             className={`flex items-center gap-3 rounded-xl p-3 text-left transition-all ${
               activeStep === 1
-                ? "bg-blue-50 border-2 border-[#003366] text-[#003366]"
-                : "border border-slate-200 text-slate-700 hover:bg-slate-50"
+                ? "bg-[#FCFFF4] border-2 border-[#0B0F19] text-[#0B0F19]"
+                : "border border-[#F2FFC7] text-slate-700 hover:bg-[#FCFFF4]"
             }`}
           >
             <div
               className={`flex h-7 w-7 items-center justify-center rounded-lg font-bold text-xs ${
-                activeStep === 1 ? "bg-[#003366] text-white" : "bg-slate-200 text-slate-700"
+                activeStep === 1 ? "bg-[#0B0F19] text-[#E5FF8F]" : "bg-[#F7FFDD] text-[#0B0F19]"
               }`}
             >
               1
             </div>
             <div>
-              <div className="text-xs font-bold">Step 1: Schema-Drift Ingestion</div>
+              <div className="text-xs font-bold text-[#0B0F19]">Step 1: Schema-Drift Ingestion</div>
               <div className="text-[11px] text-slate-600 font-medium">Fuzzy Jaro-Winkler Alignment</div>
             </div>
           </button>
@@ -588,19 +704,19 @@ export default function InstitutionPortalPage() {
             onClick={() => setActiveStep(2)}
             className={`flex items-center gap-3 rounded-xl p-3 text-left transition-all ${
               activeStep === 2
-                ? "bg-amber-50 border-2 border-[#FF7A1A] text-amber-900"
-                : "border border-slate-200 text-slate-700 hover:bg-slate-50"
+                ? "bg-[#FCFFF4] border-2 border-[#0B0F19] text-[#0B0F19]"
+                : "border border-[#F2FFC7] text-slate-700 hover:bg-[#FCFFF4]"
             }`}
           >
             <div
               className={`flex h-7 w-7 items-center justify-center rounded-lg font-bold text-xs ${
-                activeStep === 2 ? "bg-[#FF7A1A] text-white" : "bg-slate-200 text-slate-700"
+                activeStep === 2 ? "bg-[#0B0F19] text-[#E5FF8F]" : "bg-[#F7FFDD] text-[#0B0F19]"
               }`}
             >
               2
             </div>
             <div>
-              <div className="text-xs font-bold">Step 2: Pre-Commit Sandbox</div>
+              <div className="text-xs font-bold text-[#0B0F19]">Step 2: Pre-Commit Sandbox</div>
               <div className="text-[11px] text-slate-600 font-medium">Delta Diff & Fallback L1 Outage</div>
             </div>
           </button>
@@ -609,19 +725,19 @@ export default function InstitutionPortalPage() {
             onClick={() => setActiveStep(3)}
             className={`flex items-center gap-3 rounded-xl p-3 text-left transition-all ${
               activeStep === 3
-                ? "bg-emerald-50 border-2 border-[#046A38] text-emerald-900"
-                : "border border-slate-200 text-slate-700 hover:bg-slate-50"
+                ? "bg-[#FCFFF4] border-2 border-[#0B0F19] text-[#0B0F19]"
+                : "border border-[#F2FFC7] text-slate-700 hover:bg-[#FCFFF4]"
             }`}
           >
             <div
               className={`flex h-7 w-7 items-center justify-center rounded-lg font-bold text-xs ${
-                activeStep === 3 ? "bg-[#046A38] text-white" : "bg-slate-200 text-slate-700"
+                activeStep === 3 ? "bg-[#0B0F19] text-[#E5FF8F]" : "bg-[#F7FFDD] text-[#0B0F19]"
               }`}
             >
               3
             </div>
             <div>
-              <div className="text-xs font-bold">Step 3: Batch Commit & Merkle Seal</div>
+              <div className="text-xs font-bold text-[#0B0F19]">Step 3: Batch Commit & Merkle Seal</div>
               <div className="text-[11px] text-slate-600 font-medium">Idempotency & Checkpoint Signature</div>
             </div>
           </button>
@@ -634,8 +750,8 @@ export default function InstitutionPortalPage() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h3 className="text-base font-bold text-[#003366] flex items-center gap-2">
-                  <UploadCloud className="h-5 w-5 text-[#003366]" />
+                <h3 className="text-base font-bold text-[#0B0F19] flex items-center gap-2">
+                  <UploadCloud className="h-5 w-5 text-[#0B0F19]" />
                   Adaptive Schema-Drift Ingestion Pipeline
                 </h3>
                 <p className="text-xs text-slate-700 font-medium">
@@ -654,16 +770,16 @@ export default function InstitutionPortalPage() {
                 />
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-2xs"
+                  className="rounded-xl border border-[#F2FFC7] bg-white px-3.5 py-2 text-xs font-semibold text-[#0B0F19] hover:bg-[#F7FFDD] transition-colors shadow-2xs"
                 >
                   Upload CSV/Excel File
                 </button>
                 <button
                   onClick={handleLoadSampleERP}
                   disabled={loadingMapping}
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#003366] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#002244] transition-all active:scale-95"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#0B0F19] border border-[#E5FF8F]/40 px-4 py-2 text-xs font-bold text-[#E5FF8F] shadow-sm hover:bg-black transition-all active:scale-95"
                 >
-                  <Sparkles className="h-4 w-4 text-amber-300" />
+                  <Sparkles className="h-4 w-4 text-[#E5FF8F]" />
                   <span>
                     {loadingMapping ? "Mapping..." : "1-Click Messy ERP Sample (Judge Demo)"}
                   </span>
@@ -744,10 +860,10 @@ export default function InstitutionPortalPage() {
                 <div className="flex justify-end">
                   <button
                     onClick={() => setActiveStep(2)}
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#003366] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#002244] shadow-sm transition-all"
+                    className="inline-flex items-center gap-2 rounded-xl bg-[#0B0F19] border border-[#E5FF8F]/40 px-5 py-2.5 text-xs font-bold text-[#E5FF8F] hover:bg-black shadow-sm transition-all"
                   >
                     <span>Proceed to Pre-Commit Sandbox Diff Chamber</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4 text-[#E5FF8F]" />
                   </button>
                 </div>
               </div>
@@ -809,9 +925,9 @@ export default function InstitutionPortalPage() {
                 <button
                   onClick={handleRunSandbox}
                   disabled={loadingSandbox || rawRows.length === 0}
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#003366] px-4 py-2 text-xs font-bold text-white hover:bg-[#002244] transition-colors shadow-sm disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#0B0F19] border border-[#E5FF8F]/40 px-4 py-2 text-xs font-bold text-[#E5FF8F] hover:bg-black transition-colors shadow-sm disabled:opacity-50"
                 >
-                  <RefreshCw className={`h-4 w-4 ${loadingSandbox ? "animate-spin" : ""}`} />
+                  <RefreshCw className={`h-4 w-4 ${loadingSandbox ? "animate-spin text-[#E5FF8F]" : ""}`} />
                   <span>
                     {loadingSandbox ? "Evaluating Diff..." : "Run Pre-Commit Simulation"}
                   </span>
@@ -1009,10 +1125,10 @@ export default function InstitutionPortalPage() {
                   </button>
                   <button
                     onClick={() => setActiveStep(3)}
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#003366] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#002244] shadow-sm transition-all"
+                    className="inline-flex items-center gap-2 rounded-xl bg-[#0B0F19] border border-[#E5FF8F]/40 px-5 py-2.5 text-xs font-bold text-[#E5FF8F] hover:bg-black shadow-sm transition-all"
                   >
                     <span>Proceed to Batch Commit & Merkle Seal</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4 text-[#E5FF8F]" />
                   </button>
                 </div>
               </div>
@@ -1052,9 +1168,9 @@ export default function InstitutionPortalPage() {
                 <button
                   onClick={handleCommitBatch}
                   disabled={loadingCommit || rawRows.length === 0}
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#046A38] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#03532C] transition-colors shadow-sm disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#0B0F19] border border-[#E5FF8F]/40 px-5 py-2.5 text-xs font-bold text-[#E5FF8F] hover:bg-black transition-colors shadow-sm disabled:opacity-50"
                 >
-                  <CheckCircle2 className={`h-4 w-4 ${loadingCommit ? "animate-spin" : ""}`} />
+                  <CheckCircle2 className={`h-4 w-4 text-[#E5FF8F] ${loadingCommit ? "animate-spin" : ""}`} />
                   <span>
                     {loadingCommit ? "Committing Records..." : "Commit Batch to Registry"}
                   </span>
