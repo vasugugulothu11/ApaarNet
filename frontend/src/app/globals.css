@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --surface: #FFFFFF;
+  --surface-muted: #F1F5F9;
+  --border: #E2E8F0;
+  --border-muted: #CBD5E1;
+  --muted: #64748B;
+  --accent: #003366;
+  --accent-light: #E0E7FF;
+  --aicte-navy: #003366;
+  --aicte-blue: #0A4D8C;
+  --aicte-saffron: #FF7A1A;
+  --aicte-green: #046A38;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono);
+
+  --color-aicte-navy: #003366;
+  --color-aicte-blue: #0A4D8C;
+  --color-aicte-saffron: #FF7A1A;
+  --color-aicte-green: #046A38;
+
+  --color-slate-950: #0F172A;
+  --color-slate-900: #1E293B;
+  --color-slate-800: #334155;
+  --color-slate-700: #475569;
+  --color-slate-600: #64748B;
+  --color-slate-500: #94A3B8;
+  --color-slate-400: #CBD5E1;
+  --color-slate-300: #E2E8F0;
+  --color-slate-200: #E2E8F0;
+  --color-slate-100: #F1F5F9;
+  --color-slate-50: #F8FAFC;
+
+  --color-zinc-950: #0F172A;
+  --color-zinc-900: #1E293B;
+  --color-zinc-800: #334155;
+  --color-zinc-700: #475569;
+  --color-zinc-600: #64748B;
+  --color-zinc-400: #CBD5E1;
+  --color-zinc-200: #E2E8F0;
+}
+
+body {
+  background-color: #F8FAFC;
+  color: #0F172A;
+  font-family: var(--font-sans);
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* AICTE Tricolor Accent Stripe */
+.bg-tricolor-stripe {
+  background: linear-gradient(90deg, #FF7A1A 0%, #FF9933 33.3%, #FFFFFF 33.3%, #FFFFFF 66.6%, #046A38 66.6%, #138808 100%);
+}
+
+/* Subtle scrollbars mapped to AICTE government palette */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}

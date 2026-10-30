@@ -1,0 +1,1 @@
+"""ApaarNet Core Backend Application."""
